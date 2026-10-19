@@ -2,6 +2,7 @@
    15/10/2026 (piano caa-lavagna): via il pannello della chat e il tasto AI; al suo posto il tasto CAA, che apre nel riquadro la /caa/ del sito.
    18/10/2026 (piano caa-lavagna-20261018, versione 0.3): il tasto si chiama «Schede CAA», l'indirizzo è relativo («../caa/»), la webcam è
    concessa alla sola /caa/ e il riquadro della CAA si NASCONDE (non si distrugge) quando si apre un PDF, un sito o un video (rilievo C06).
+   19/10/2026 (versione 0.5, richiesta di Mauro): con un video nel riquadro il fonometro va in pausa da solo e riparte quando il video se ne va.
    Il fonometro è il motore della v6 (fonometro.js), NON toccato: questa pagina gli dà gli elementi fono-*
    e legge soltanto ciò che lui scrive (percentuali, hidden, testi). Nessun dato si salva nel browser,
    nessuna richiesta di rete parte da qui.
@@ -31,7 +32,9 @@
     titoloVideo: "Video di YouTube",      // T42
     titoloPdf: "PDF di questo computer",  // T43
     bloccata: "Il browser non ha aperto la scheda. Permetti le finestre per questa pagina e riprova.", // T44
-    caa: "Schede CAA"                     // D64 (15/10/2026, nome nuovo il 18/10/2026): il tasto e il titolo del riquadro della /caa/
+    caa: "Schede CAA",                    // D64 (15/10/2026, nome nuovo il 18/10/2026): il tasto e il titolo del riquadro della /caa/
+    pausaVideo: "Fonometro in pausa: il microfono sentirebbe il video. Chiudi il video e riparte da solo.",   // D75 (19/10/2026)
+    riprendeVideo: "Video chiuso: il fonometro è ripartito."   // D76 (19/10/2026)
   };
 
   /* ---------- 15/10/2026 (piano caa-lavagna, S2 e R10): la /caa/ del sito, stessa origine della lavagna. Nel riquadro va la
@@ -508,7 +511,39 @@
     var giroArea = 0;                    // G03: ogni scelta (link, PDF, Chiudi) avanza il giro; le letture vecchie si ignorano
 
     function messaggio(v) { testo(a.msg, v || ""); }
-    function tipoArea(v) { sezione.setAttribute("data-area", v); a.nota.hidden = v !== "sito"; }
+    function tipoArea(v) {
+      var era = sezione.getAttribute("data-area");
+      sezione.setAttribute("data-area", v); a.nota.hidden = v !== "sito";
+      if (v === "video") videoEntra(); else if (era === "video") videoEsce();   // 19/10/2026: pausa automatica del fonometro
+    }
+
+    /* ---- 19/10/2026 (richiesta di Mauro): col video di YouTube nel riquadro il microfono sente le casse e il motore
+       tratterebbe l'audio del video come rumore della classe (sopra la linea, X, sfida). Quindi all'apertura di un video, se il
+       fonometro è in ascolto e non già in pausa, questa pagina preme la sua Pausa (lo stesso tasto del docente: il motore non
+       si tocca) e lo dice nel messaggio; quando il video lascia il riquadro (Chiudi, un altro contenuto, «Apri in una scheda»)
+       preme Riprendi, ma solo se la pausa è ancora la sua: se nel frattempo il docente ha ripreso o l'ascolto si è fermato
+       (la fase è cambiata), la pagina non fa niente. Una pausa messa dal docente PRIMA del video resta sua: non si riprende.
+       La pagina non sa se il video suona davvero (player di un'altra origine): la pausa dura finché il video è aperto. ---- */
+    var tastoPausa = $("fono-pausa"), pausaDaVideo = false;
+    function faseFono() { return sezione.getAttribute("data-fase") || ""; }
+    function videoEntra() {
+      if (pausaDaVideo) { messaggio(TESTI.pausaVideo); return; }                                 // un video sopra l'altro: la pausa resta, il messaggio torna
+      if (!tastoPausa || tastoPausa.disabled || faseFono() === "pausa") return;                  // non in ascolto, o pausa del docente
+      tastoPausa.click();
+      if (faseFono() !== "pausa") return;
+      pausaDaVideo = true;
+      messaggio(TESTI.pausaVideo);
+    }
+    function videoEsce() {
+      if (!pausaDaVideo) return;
+      pausaDaVideo = false;
+      if (!tastoPausa || tastoPausa.disabled || faseFono() !== "pausa") return;
+      tastoPausa.click();
+      messaggio(TESTI.riprendeVideo);
+    }
+    if (win.MutationObserver) new win.MutationObserver(function () {
+      if (pausaDaVideo && faseFono() !== "pausa") pausaDaVideo = false;    // il docente ha ripreso (o l'ascolto si è fermato): la pausa non è più nostra
+    }).observe(sezione, { attributes: true, attributeFilter: ["data-fase"] });
     function aggiornaScheda() { a.scheda.disabled = !destinazione; }
 
     /* ---- 15/10/2026 (piano caa-lavagna: S1, S2, S4; R2, R6, R10 della regia) · il tasto «Schede CAA» apre nel
