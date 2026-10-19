@@ -1,0 +1,474 @@
+/* Casinometro v7 per la LIM: stile di tutta la pagina, compresi gli elementi fono-* del motore.
+   NON carica casinometro.css (F03): i colori sono quelli della palette v6 (casinometro.css righe 37-57),
+   copiati qui come valori. Le misure seguono la finestra (vh, vw, clamp; F23), minimo 1024x640. */
+
+@font-face{font-family:"Bricolage Grotesque";font-style:normal;font-weight:200 800;font-display:swap;
+  src:url("font/bricolage-grotesque-latin.woff2") format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+@font-face{font-family:"Bricolage Grotesque";font-style:normal;font-weight:200 800;font-display:swap;
+  src:url("font/bricolage-grotesque-latin-ext.woff2") format("woff2");
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;}
+@font-face{font-family:"Playwrite IT Moderna";font-style:normal;font-weight:400;font-display:block;
+  src:url("font/playwrite-it-moderna-latin-400-normal.woff2") format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Patrick Hand";font-style:normal;font-weight:400;font-display:block;
+  src:url("font/patrick-hand-latin-400-normal.woff2") format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Patrick Hand";font-style:normal;font-weight:400;font-display:block;
+  src:url("font/patrick-hand-latin-ext-400-normal.woff2") format("woff2");
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"IBM Plex Sans";font-style:normal;font-weight:400;font-display:swap;
+  src:url("font/ibm-plex-sans-latin-400.woff2") format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+@font-face{font-family:"IBM Plex Sans";font-style:normal;font-weight:500;font-display:swap;
+  src:url("font/ibm-plex-sans-latin-500.woff2") format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+@font-face{font-family:"IBM Plex Sans";font-style:normal;font-weight:600;font-display:swap;
+  src:url("font/ibm-plex-sans-latin-600.woff2") format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;}
+@font-face{font-family:"IBM Plex Sans";font-style:normal;font-weight:400;font-display:swap;
+  src:url("font/ibm-plex-sans-latin-ext-400.woff2") format("woff2");
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;}
+
+/* ---- 1 · palette (valori v6) e misure ---- */
+:root{
+  --glicine:#E7DFF3; --carta:#F7F4FB; --scheda:#FFFFFF; --inchiostro:#231A35; --muto:#594D6E;
+  --viola:#6B4FA0; --viola-scuro:#5B3F8F; --azione:#15803D; --azione-su:#146B33; --bordo-campo:#868190;
+  --verde:#22A352; --giallo:#D4A017; --rosso:#D03030; --raggio:12px; --raggio-g:20px;
+  --sotto:#0E8A3E; --sopra:#E2480F;                     /* i colori del motore (COLORE_SOTTO, COLORE_SOPRA) */
+  --fascia:clamp(132px, 21vh, 240px);                   /* fascia alta: 227 a 1080, 168 a 800 */
+  --col-ora:calc(var(--fascia) * 1.62);                 /* l'orologio deve contenere HH:MM a 0,58 della fascia */
+  --col-dx:max(25vw, 340px);                            /* timer, banda (A) e colonna del fonometro (B) */
+  --barra:clamp(52px, 6.2vh, 72px);                     /* barra dell'area */
+  --tocco:clamp(44px, 5.2vh, 56px);                     /* bersaglio di tocco: 56 a 1080, 44 a 800 */
+  --gap:clamp(6px, 0.8vh, 12px);
+  --testo:clamp(15px, 1.75vh, 22px);
+}
+@media (max-height:760px){ :root{ --tocco:40px; } }
+
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--carta);color:var(--inchiostro)}
+body{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:var(--testo);line-height:1.25}
+[hidden]{display:none !important}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--viola-scuro);outline-offset:2px}
+
+/* ---- 2 · la griglia delle due viste ---- */
+.lim{
+  position:relative;width:100vw;height:100vh;overflow:hidden;
+  display:grid;gap:var(--gap);padding:var(--gap);
+  grid-template-columns:var(--col-ora) minmax(0,1fr) var(--col-dx);
+}
+.lim[data-vista="a"]{
+  grid-template-rows:var(--fascia) var(--barra) minmax(0,1fr);
+  grid-template-areas:"ora fono timer" "barra barra barra" "area area banda";
+}
+.lim[data-vista="b"]{
+  grid-template-rows:var(--fascia) minmax(0,1fr);
+  grid-template-areas:"ora barra timer" "area area fono";
+}
+.lim-orologio{grid-area:ora}
+.lim-fono{grid-area:fono}
+.lim-timer{grid-area:timer}
+.lim-barra-area{grid-area:barra}
+.lim-area{grid-area:area}
+.lim-banda{grid-area:banda}
+.lim[data-vista="b"] .lim-banda{display:none}
+.lim > *{min-width:0;min-height:0}
+
+/* ---- 3 · orologio ---- */
+.lim-orologio{display:flex;align-items:center;justify-content:center;background:var(--scheda);border-radius:var(--raggio-g);overflow:hidden}
+.fono-ora{margin:0;display:flex;flex-direction:column;align-items:center;line-height:1}
+.lim-ora{font-family:"Bricolage Grotesque","IBM Plex Sans",sans-serif;font-weight:700;font-size:calc(var(--fascia) * 0.58);
+  font-variant-numeric:tabular-nums;letter-spacing:-0.02em}
+.lim-piccolo{font-size:calc(var(--fascia) * 0.085);color:var(--muto);margin-top:calc(var(--fascia) * 0.03)}
+
+/* ---- 4 · fonometro: blocco comune ---- */
+.lim-fono{position:relative;border-radius:var(--raggio-g);background:var(--scheda);overflow:hidden;display:flex;flex-direction:column;padding:var(--gap)}
+.fono-pronto{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--gap);text-align:center}
+.lim-nota-micro{margin:0;color:var(--muto);max-width:42em}
+.fono-avvia{min-height:calc(var(--tocco) * 1.15);min-width:calc(var(--tocco) * 3);padding:0 1.4em;border:0;border-radius:var(--raggio);
+  background:var(--azione);color:#fff;font-weight:600;font-size:calc(var(--testo) * 1.3);cursor:pointer}
+.fono-avvia:hover{background:var(--azione-su)}
+.fono-pannello{display:none;flex:1;min-height:0}
+.lim.fono-attivo .fono-pronto{display:none}
+.lim.fono-attivo .fono-pannello{display:grid}
+.fono-avviso{margin:0;font-size:calc(var(--testo) * 0.85);color:var(--inchiostro)}
+.fono-avviso:empty{display:none}
+.fono-storia{display:none}                              /* la striscia dei 5 minuti non c'è nella v7 (D7-8) */
+.fono-spento{margin:0;font-size:calc(var(--testo) * 0.8);color:var(--muto)}
+
+/* colori di fase (valori della v6), solo sul blocco del fonometro */
+.lim.fono-attivo[data-fase="senza-linea"] .lim-fono,.lim.fono-attivo[data-fase="ascolto-linea"] .lim-fono{background:#BFE3FF}
+.lim.fono-attivo[data-fase="lavoro"] .lim-fono{background:#3CC47C}
+.lim.fono-attivo[data-fase="sopra"] .lim-fono,.lim.fono-attivo[data-fase="reset"] .lim-fono{background:#FF8A1C}
+.lim.fono-attivo[data-fase="missione"] .lim-fono{background:#3A1FB8;color:#fff}
+.lim.fono-attivo[data-fase="esito-ok"] .lim-fono{background:#9BEF5A}
+.lim.fono-attivo[data-fase="esito-no"] .lim-fono,.lim.fono-attivo[data-fase="pausa"] .lim-fono{background:#ECE8F2}
+.lim[data-fase="missione"] .lim-fono :focus-visible{outline-color:#fff}
+
+/* tasti del motore e della v7 */
+.fono-tasto,.lim-tasto{min-height:var(--tocco);min-width:var(--tocco);padding:0 0.9em;border:2px solid var(--inchiostro);
+  border-radius:var(--raggio);background:var(--scheda);color:var(--inchiostro);font-weight:600;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;gap:0.35em;white-space:nowrap;line-height:1.1;
+  touch-action:manipulation}   /* G26: niente attesa del doppio tocco sulla LIM */
+#fonometro button{touch-action:manipulation}   /* G26: anche Avvia del motore, la X e le cifre del timer */
+.fono-tasto:disabled,.lim-tasto:disabled{opacity:0.45;cursor:default}
+.fono-tasto-ferma{border-color:var(--rosso);color:#A11F1F}
+.lim.fono-attivo[data-fase="senza-linea"] #fono-fissa{background:var(--azione);border-color:var(--azione);color:#fff}
+
+/* la barra LAVORO-RESET con la X (motore) */
+.fono-barra{display:flex;align-items:center;gap:0.4em;font-weight:600;font-size:calc(var(--testo) * 0.8)}
+.fono-capo{letter-spacing:0.04em}
+.fono-binario{position:relative;flex:1;min-width:calc(var(--tocco) * 1.6);height:var(--tocco);border-radius:var(--raggio);background:rgba(35,26,53,0.12)}
+.fono-x{position:absolute;top:0;left:0;width:var(--tocco);height:var(--tocco);border:2px solid var(--inchiostro);border-radius:var(--raggio);
+  background:var(--scheda);color:var(--inchiostro);font-weight:700;font-size:calc(var(--tocco) * 0.45);cursor:pointer;transition:left 0.4s}
+.fono-x[data-su="reset"]{left:calc(100% - var(--tocco));background:var(--inchiostro);color:#fff}
+.fono-x:disabled{opacity:0.45;cursor:default}
+
+/* parola di stato, istruzione, anello, missione */
+.fono-parola{display:flex;align-items:center;gap:0.6em;min-width:0;overflow:hidden}
+.fono-stato-classe{margin:0;font-family:"Bricolage Grotesque","IBM Plex Sans",sans-serif;font-weight:700;font-size:calc(var(--fascia) * 0.13);line-height:1.05}
+.fono-stato-classe[data-lunga="si"]{font-size:calc(var(--fascia) * 0.085)}
+.fono-istruzione{margin:0;font-size:calc(var(--testo) * 0.75);line-height:1.2;max-width:30em}
+.fono-missione{display:flex;align-items:center;gap:0.5em}
+.fono-missione-titolo{margin:0;font-weight:600}
+.fono-conto{margin:0;font-weight:700;font-size:calc(var(--fascia) * 0.16);font-variant-numeric:tabular-nums}
+.fono-conto:empty{display:none}
+.fono-respiro{display:flex;align-items:center;gap:0.4em}
+.fono-cerchio{display:block;width:calc(var(--fascia) * 0.22);height:calc(var(--fascia) * 0.22);border-radius:50%;background:currentColor;
+  opacity:0.6;transform:scale(var(--respiro, 0.5));transition:transform 0.25s linear}
+.fono-anello{position:relative;flex:none;width:calc(var(--fascia) * 0.3);height:calc(var(--fascia) * 0.3)}
+.fono-anello svg{width:100%;height:100%;display:block}
+.fono-anello-traccia{fill:none;stroke:rgba(35,26,53,0.2);stroke-width:4}
+.fono-anello-arco{fill:none;stroke:var(--inchiostro);stroke-width:4;stroke-dasharray:100;transition:stroke-dashoffset 0.25s linear}
+.fono-anello-numero{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:calc(var(--fascia) * 0.13)}
+
+/* riquadro della media (motore) */
+.fono-media{border-radius:var(--raggio);background:var(--scheda);color:var(--inchiostro);border:3px solid #0A7A34;padding:0.15em 0.5em;text-align:center;line-height:1}
+.fono-media[data-sopra="si"]{border-color:#C2410C}
+.fono-media-titolo{margin:0 0 0.1em;font-size:calc(var(--testo) * 0.7);font-weight:600}
+.fono-media-valore{margin:0;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.fono-media-unita{font-size:0.4em}
+
+/* colonna della v6 (vista B) */
+.fono-misura{margin:0;font-size:calc(var(--testo) * 0.8);color:var(--muto)}
+.fono-strumento{position:relative;display:grid;grid-template-columns:2.2em 1fr 3.4em;gap:0.4em;min-height:0}
+.fono-scala{position:relative;font-size:calc(var(--testo) * 0.7);color:var(--muto)}
+.fono-tacca{position:absolute;right:0;transform:translateY(50%);font-variant-numeric:tabular-nums}
+.fono-colonna{position:relative;border-radius:8px;background:rgba(35,26,53,0.10);overflow:hidden}
+.fono-livello{position:absolute;left:0;right:0;bottom:0;height:0;background:var(--sotto)}
+.fono-livello-sopra{position:absolute;left:0;right:0;bottom:100%;height:0;background:var(--sopra)}
+.fono-linea{position:absolute;left:0;right:0;height:0;border-top:4px dashed var(--inchiostro);transform:translateY(2px)}
+.fono-media-tacca{position:absolute;left:-4px;right:-4px;height:0;border-top:4px solid #0A7A34;transform:translateY(2px)}
+.fono-etichette{position:relative;font-size:calc(var(--testo) * 0.8);font-weight:600}
+.fono-etichetta{position:absolute;left:0;white-space:nowrap;line-height:1.1}
+.fono-etichetta-livello{font-size:1.6em;font-weight:700;font-variant-numeric:tabular-nums}
+
+/* ---- 5 · fonometro nella vista A: barra orizzontale nella fascia ---- */
+.lim[data-vista="a"] .fono-pannello{
+  grid-template-columns:minmax(0,1fr) auto auto;
+  grid-template-rows:minmax(0,1fr) auto;
+  grid-template-areas:"oriz numero media" "parola barra comandi";
+  gap:calc(var(--gap) * 0.8) var(--gap);align-items:center;
+}
+.lim[data-vista="a"] .fono-misura,.lim[data-vista="a"] .fono-strumento{display:none}
+.lim[data-vista="a"] .lim-orizzontale{grid-area:oriz}
+.lim[data-vista="a"] .lim-numero{grid-area:numero}
+.lim[data-vista="a"] .fono-media{grid-area:media}
+.lim[data-vista="a"] .fono-parola{grid-area:parola}
+.lim[data-vista="a"] .fono-barra{grid-area:barra;width:calc(var(--tocco) * 4.6)}
+.lim[data-vista="a"] .fono-comandi{grid-area:comandi}
+.lim[data-vista="a"] .fono-spento{position:absolute;right:var(--gap);bottom:0}
+.lim-orizzontale{display:none;min-width:0}
+.lim[data-vista="a"] .lim-orizzontale{display:flex;flex-direction:column;justify-content:center;gap:0.15em}
+.lim-binario-o{position:relative;flex:none;height:max(36px, 4.6vh);border-radius:8px;background:rgba(35,26,53,0.12);overflow:hidden}
+.lim-o-sotto{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--sotto)}
+.lim-o-sopra{position:absolute;top:0;bottom:0;left:100%;width:0;background:var(--sopra)}
+.lim-o-linea{position:absolute;top:0;bottom:0;width:0;border-left:4px dashed var(--inchiostro);transform:translateX(-2px)}
+.lim-o-media{position:absolute;top:-2px;bottom:-2px;width:0;border-left:5px solid #0A7A34;transform:translateX(-2px)}
+.lim-o-etichette{position:relative;flex:none;height:1.2em;line-height:1.2em;font-size:calc(var(--testo) * 0.85);font-weight:600}
+.lim-o-et{position:absolute;top:0;white-space:nowrap;transform:translateX(-50%)}
+.lim-numero{display:none;margin:0;line-height:0.9;text-align:right}
+.lim[data-vista="a"] .lim-numero{display:flex;flex-direction:column;align-items:flex-end}
+.lim-numero-valore{font-family:"Bricolage Grotesque","IBM Plex Sans",sans-serif;font-weight:700;font-size:calc(var(--fascia) * 0.32);font-variant-numeric:tabular-nums}
+.lim-numero-unita{font-size:calc(var(--testo) * 0.7);color:inherit}
+.lim[data-vista="a"] .fono-media-valore{font-size:calc(var(--fascia) * 0.34)}
+.lim[data-vista="a"] .fono-media{align-self:stretch;display:flex;flex-direction:column;justify-content:center}
+.fono-comandi{display:flex;gap:calc(var(--gap) * 0.8);flex-wrap:nowrap}
+
+/* ---- 6 · fonometro nella vista B: la colonna della v6 a destra ---- */
+.lim[data-vista="b"] .fono-pannello{
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:auto auto minmax(0,1fr) auto auto auto;
+  grid-template-areas:"parola" "misura" "strumento" "media" "barra" "comandi";
+  gap:var(--gap);
+}
+.lim[data-vista="b"] .fono-parola{grid-area:parola;min-height:calc(var(--fascia) * 0.3)}
+.lim[data-vista="b"] .fono-misura{grid-area:misura}
+.lim[data-vista="b"] .fono-strumento{grid-area:strumento}
+.lim[data-vista="b"] .fono-media{grid-area:media}
+.lim[data-vista="b"] .fono-media-valore{font-size:calc(var(--fascia) * 0.3)}
+.lim[data-vista="b"] .fono-barra{grid-area:barra}
+.lim[data-vista="b"] .fono-comandi{grid-area:comandi}
+.lim[data-vista="b"] .fono-comandi .fono-tasto{flex:1;padding:0 0.4em}
+.lim[data-vista="b"] .fono-etichetta-livello{font-size:calc(var(--fascia) * 0.2)}
+.lim[data-vista="b"] .fono-strumento{grid-template-columns:2.2em minmax(0,1fr) minmax(4.5em,1.4fr)}
+
+/* ---- 7 · timer: disco a sinistra, cifre e tasti a lato (F10) ---- */
+.lim-timer{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto;
+  gap:calc(var(--gap) * 0.6) var(--gap);align-items:center;padding:var(--gap);border-radius:var(--raggio-g);background:var(--scheda);overflow:hidden}
+.lim-disco{position:relative;width:calc(var(--fascia) * 0.8);height:calc(var(--fascia) * 0.8)}
+.lim-disco svg{display:block;width:100%;height:100%}
+.lim-disco-fondo{fill:var(--glicine)}
+.lim-disco-settore{fill:var(--viola)}
+.lim[data-timer="corre"] .lim-disco-settore{fill:var(--azione)}
+.lim[data-timer="pausa"] .lim-disco-settore{fill:var(--giallo)}
+.lim-timer-lato{display:flex;flex-direction:column;gap:calc(var(--gap) * 0.6);min-width:0}
+.lim-cifre{border:0;background:none;padding:0;margin:0;cursor:pointer;text-align:left;
+  font-family:"Bricolage Grotesque","IBM Plex Sans",sans-serif;font-weight:700;font-size:calc(var(--fascia) * 0.3);line-height:1;
+  font-variant-numeric:tabular-nums;color:inherit}
+.lim-scaduto{position:absolute;margin:0;left:var(--gap);top:var(--gap);width:calc(var(--fascia) * 0.8);height:calc(var(--fascia) * 0.8);
+  display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;font-size:calc(var(--fascia) * 0.1);line-height:1.1;pointer-events:none}
+/* G36: vuoto resta nel layout (trasparente, senza tocchi): la regione role=status esiste già quando arriva T15 */
+.lim-timer-comandi{display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--gap) * 0.6)}
+.lim-timer-comandi .lim-tasto{padding:0 0.4em;min-width:0}
+.lim-timer-barra{grid-column:1 / -1;height:6px;border-radius:3px;background:var(--glicine);overflow:hidden}
+.lim-timer-barra-pieno{height:100%;width:100%;background:var(--viola)}
+.lim[data-timer="corre"] .lim-timer-barra-pieno{background:var(--azione)}
+.lim[data-timer="pausa"] .lim-timer-barra-pieno{background:var(--giallo)}
+/* tempo scaduto: fondo rosso FISSO, nessun lampeggio, nessun suono */
+.lim[data-timer="scaduto"] .lim-timer{background:var(--rosso);color:#fff}
+.lim[data-timer="scaduto"] .lim-disco-fondo{fill:rgba(255,255,255,0.18)}
+.lim[data-timer="scaduto"] .lim-timer :focus-visible{outline-color:#fff}
+.lim[data-timer="scaduto"] .lim-timer .lim-tasto{border-color:#fff}
+
+/* timer grande: copre l'area (e la banda nella vista A); col VIDEO prende metà area e il player si restringe (F16) */
+.lim[data-grande="si"] .lim-timer{z-index:5;box-shadow:0 0 0 3px var(--inchiostro);
+  grid-template-columns:auto minmax(0,1fr);justify-content:center;align-content:center;padding:calc(var(--gap) * 3)}
+.lim[data-vista="a"][data-grande="si"] .lim-timer{grid-row:3;grid-column:1 / 4}
+.lim[data-vista="b"][data-grande="si"] .lim-timer{grid-row:2;grid-column:1 / 3}
+.lim[data-grande="si"] .lim-disco{width:min(55vh, 38vw);height:min(55vh, 38vw)}
+.lim[data-grande="si"] .lim-scaduto{left:calc(var(--gap) * 3);top:50%;transform:translateY(-50%);width:min(55vh, 38vw);height:min(55vh, 38vw);font-size:min(6vh, 4vw)}
+.lim[data-grande="si"] .lim-cifre{font-size:min(20vh, 13vw)}
+/* vista B: la colonna del fonometro resta libera, l'area è più stretta (75% della larghezza) */
+.lim[data-vista="b"][data-grande="si"] .lim-disco,.lim[data-vista="b"][data-grande="si"] .lim-scaduto{width:min(55vh, 28vw);height:min(55vh, 28vw)}
+.lim[data-vista="b"][data-grande="si"] .lim-cifre{font-size:min(20vh, 9vw)}
+.lim[data-grande="si"] .lim-timer-comandi .lim-tasto{min-height:calc(var(--tocco) * 1.1)}
+.lim[data-grande="si"] .lim-timer-barra{height:10px}
+/* col VIDEO: il timer grande e il pannello stanno nella metà destra dell'area, il player nella sinistra */
+.lim[data-area="video"][data-grande="si"] .lim-timer{grid-column:1 / 3;justify-self:end;width:calc(50% - var(--gap) * 0.5);
+  grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto;justify-items:center;padding:calc(var(--gap) * 1.5)}
+.lim[data-area="video"][data-grande="si"] .lim-disco{width:min(32vh, 22vw);height:min(32vh, 22vw)}
+.lim[data-area="video"][data-grande="si"] .lim-scaduto{left:50%;top:calc(var(--gap) * 1.5);transform:translateX(-50%);width:min(32vh, 22vw);height:min(32vh, 22vw)}
+.lim[data-area="video"][data-grande="si"] .lim-cifre{font-size:min(14vh, 8vw);text-align:center}
+.lim[data-area="video"][data-grande="si"] .lim-riquadro,
+.lim[data-area="video"][data-pannello="si"] .lim-riquadro{flex:1;align-self:flex-start;width:calc(50% - var(--gap));min-width:200px;min-height:200px}
+
+/* ---- 8 · pannello delle durate: NON modale, sopra l'area, mai sopra fascia o colonna (F09) ---- */
+.lim-pannello{z-index:6;align-self:start;justify-self:stretch;margin:var(--gap);padding:var(--gap);border-radius:var(--raggio-g);
+  background:var(--scheda);border:3px solid var(--viola);display:flex;flex-wrap:wrap;gap:var(--gap);align-items:center}
+.lim[data-vista="a"] .lim-pannello{grid-row:3;grid-column:1 / 3}
+.lim[data-vista="b"] .lim-pannello{grid-row:2;grid-column:1 / 3}
+.lim[data-area="video"] .lim-pannello{justify-self:end;width:calc(50% - var(--gap) * 1.5)}
+.lim-durate{display:flex;flex-wrap:wrap;gap:var(--gap)}
+.lim-durata{min-width:calc(var(--tocco) * 1.8);font-size:calc(var(--testo) * 1.2)}
+.lim-durata span{font-size:0.7em;font-weight:500}
+.lim-altro-campi{display:flex;flex-wrap:wrap;gap:var(--gap);align-items:center}
+.lim-etichetta{display:flex;align-items:center;gap:0.4em;font-weight:600}
+.lim-numerico{width:4.2em}
+
+/* ---- 9 · barra dell'area ---- */
+.lim-barra-area{display:flex;flex-wrap:wrap;align-items:center;align-content:center;gap:calc(var(--gap) * 0.8);min-width:0}
+.lim[data-vista="b"] .lim-barra-area{background:var(--scheda);border-radius:var(--raggio-g);padding:var(--gap)}
+.lim-link{display:flex;gap:calc(var(--gap) * 0.8);flex:1 1 9em;min-width:0}
+/* 15/10/2026: col tasto CAA (più largo di «AI»; dal 18/10/2026 «Schede CAA») la barra deve restare su UNA riga anche a 1024 px: base del campo
+   link più corta (cresce comunque a riempire) e tasti meno imbottiti sotto i 1100 px */
+@media (max-width:1100px){ .lim-barra-area .lim-tasto,.lim-barra-area .fono-tasto{padding:0 0.55em} }
+.lim-campo{min-height:var(--tocco);min-width:0;flex:1;padding:0 0.7em;border:2px solid var(--bordo-campo);border-radius:var(--raggio);
+  background:var(--scheda);color:var(--inchiostro);font:inherit}
+.lim-numerico{flex:none}
+.lim-vista[aria-pressed="true"]{background:var(--inchiostro);color:#fff}
+
+/* ---- 10 · area grande e banda ---- */
+.lim-area{position:relative;display:flex;flex-direction:column;gap:calc(var(--gap) * 0.5);border-radius:var(--raggio-g);
+  background:var(--scheda);overflow:hidden;padding:calc(var(--gap) * 0.5)}
+.lim-riquadro{flex:1;min-height:0;display:flex}
+.lim[data-area="vuota"] .lim-riquadro{display:none}
+.lim-riquadro iframe{flex:1;width:100%;height:100%;border:0;border-radius:var(--raggio);background:var(--carta)}
+/* 18/10/2026 (rilievo C06): l'iframe della CAA nascosto sotto un PDF, un sito o un video resta nel DOM e non occupa spazio */
+.lim-riquadro iframe[hidden]{display:none}
+.lim-nota-sito{margin:0;font-size:calc(var(--testo) * 0.75);color:var(--muto)}
+.lim-messaggio{margin:0;padding:0.4em 0.7em;border-radius:var(--raggio);background:#FFF4D6;border:2px solid var(--giallo);font-weight:600;order:-1}
+.lim-messaggio:empty{display:none}
+.lim-banda{border:3px dashed var(--glicine);border-radius:var(--raggio-g);display:flex;align-items:flex-start;justify-content:center;padding:var(--gap)}
+.lim-banda p{margin:0;color:var(--muto);font-size:calc(var(--testo) * 0.85)}
+
+/* ---- 11 · finestre strette (fino a 1599 px o fino a 899 px di altezza): icone con la parola sotto (F24, F30) ---- */
+.lim-tasto[class*="lim-ic-"]::before,.fono-tasto[class*="lim-ic-"]::before{content:none}
+@media (max-width:1599px), (max-height:899px){
+  .fono-comandi .fono-tasto,.lim-timer-comandi .lim-tasto,#fono-schermo{
+    flex-direction:column;gap:2px;padding:2px 0.3em;font-size:calc(var(--testo) * 0.62);white-space:normal;text-align:center;line-height:1}
+  .lim-timer-comandi .lim-tasto::before,.fono-comandi .fono-tasto::before,#fono-schermo::before{
+    content:"";display:block;flex:none;width:calc(var(--tocco) * 0.4);height:calc(var(--tocco) * 0.4);background:currentColor;
+    -webkit-mask:var(--icona) center / contain no-repeat;mask:var(--icona) center / contain no-repeat}
+  .lim[data-grande="si"] .lim-timer-comandi .lim-tasto{font-size:var(--testo)}
+}
+/* icone disegnate qui (nessun file in più). Il timer grande ha un'icona sua, diversa dalle frecce dello schermo intero (F30) */
+.lim-ic-fissa{--icona:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M2 11h20v3H2z'/%3E%3C/svg%3E")}
+.lim-ic-pausa{--icona:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 4h4v16H6zM14 4h4v16h-4z'/%3E%3C/svg%3E")}
+.lim-ic-ferma{--icona:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 5h14v14H5z'/%3E%3C/svg%3E")}
+.lim-ic-schermo{--icona:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 3h7v3H6v4H3zM14 3h7v7h-3V6h-4zM3 14h3v4h4v3H3zM18 14h3v7h-7v-3h4z'/%3E%3C/svg%3E")}
+.lim-ic-avvia{--icona:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 4l13 8-13 8z'/%3E%3C/svg%3E")}
+.lim[data-timer="corre"] .lim-ic-avvia{--icona:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 4h4v16H6zM14 4h4v16h-4z'/%3E%3C/svg%3E")}
+.lim-ic-azzera{--icona:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 4a8 8 0 1 1-7.4 5h3.3A5 5 0 1 0 12 7v3L7 5.5 12 1z'/%3E%3C/svg%3E")}
+.lim-ic-tempo{--icona:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M11 2h2v3h-2zM12 6a8 8 0 1 1 0 16 8 8 0 0 1 0-16zm0 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm-1 1h2v4h-2z'/%3E%3C/svg%3E")}
+.lim-ic-grande{--icona:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18zm0 3v6h5a5 5 0 0 0-5-6z'/%3E%3C/svg%3E")}
+
+/* finestre basse o strette (fino a 1024x640, F23): tasti del timer più vicini, barra della X più corta,
+   così l'anello del reset e i tasti del timer non escono dal loro spazio */
+@media (max-height:760px){
+  .lim-timer-lato,.lim-timer-comandi{gap:4px}
+  .lim:not([data-grande="si"]) .lim-timer-comandi{grid-template-columns:repeat(4, minmax(0,1fr))}
+}
+@media (max-width:1279px){
+  .lim[data-vista="a"] .fono-barra{width:calc(var(--tocco) * 4.2)}
+  .lim[data-vista="a"] .fono-parola{gap:0.3em}
+  .lim[data-vista="a"] .fono-anello{width:calc(var(--fascia) * 0.25);height:calc(var(--fascia) * 0.25)}
+}
+
+/* ---- 12 · v9: la lavagna d'ardesia al centro (8/10/2026, richiesta di Mauro; rivista col giro 1 del check avverso) ----
+   Ardesia grigio scuro, cornice di legno a quattro assi, gesso pieno (bianco e giallo), mensola coi gessetti e il cancellino.
+   Tutto disegnato qui: nessuna immagine in più, font del gesso in locale (OFL). Le lettere NON hanno maschere né filtri:
+   da 6-8 metri si legge un tratto pieno. La grana sta solo sul fondo (velo di polvere); l'irregolarità sta nei segni
+   tirati a mano (la riga sotto il titolo). Sotto zoom o finestra bassa la lavagna scorre
+   dentro la cornice, così niente si perde. */
+:root{
+  --ardesia:#2F3538; --ardesia-scura:#262B2E; --gesso:#F2EFE6;
+  --gesso-giallo:#F2DC7A; --legno:#7A4E2D; --legno-chiaro:#9C6A3F; --legno-scuro:#4E301A;
+  --cornice:clamp(10px, 1.5vh, 18px);
+  --polvere:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E");
+}
+/* l'area intera diventa la lavagna: la cornice resta anche quando dentro c'è un sito, un video o un PDF.
+   Fondo: velo di polvere, strisce tenui di cancellino, una macchia chiara decentrata, l'ardesia */
+.lim-area{border-radius:6px;padding:var(--cornice) var(--cornice) 0;gap:calc(var(--gap) * 0.5);color:var(--gesso);isolation:isolate;
+  background:
+    var(--polvere),
+    repeating-linear-gradient(-55deg, rgba(255,255,255,0.014) 0 14px, transparent 14px 30px, rgba(255,255,255,0.01) 30px 42px, transparent 42px 64px),
+    radial-gradient(ellipse 28% 16% at 76% 70%, rgba(255,255,255,0.06), transparent 70%),
+    radial-gradient(ellipse at 50% 40%, var(--ardesia) 0%, var(--ardesia-scura) 100%);
+  box-shadow:
+    inset 0 0 0 var(--cornice) var(--legno),
+    inset 0 0 0 calc(var(--cornice) + 2px) var(--legno-scuro),
+    inset 0 0 calc(var(--cornice) * 3) calc(var(--cornice) + 2px) rgba(0,0,0,0.45),
+    0 3px 10px rgba(35,26,53,0.25)}
+/* venature del legno: quattro assi (sopra e sotto a tutta larghezza, ai lati fra le due), nessuna maschera */
+.lim-area::before{content:"";position:absolute;inset:0;border-radius:6px;pointer-events:none;z-index:0;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(255,255,255,0.05) 3px 4px, transparent 4px 9px, rgba(0,0,0,0.09) 9px 10px) top / 100% var(--cornice) no-repeat,
+    repeating-linear-gradient(0deg, transparent 0 4px, rgba(0,0,0,0.09) 4px 5px, transparent 5px 10px, rgba(255,255,255,0.05) 10px 11px) bottom / 100% var(--cornice) no-repeat,
+    repeating-linear-gradient(90deg, transparent 0 3px, rgba(255,255,255,0.05) 3px 4px, transparent 4px 9px, rgba(0,0,0,0.09) 9px 10px) left center / var(--cornice) calc(100% - var(--cornice) * 2) no-repeat,
+    repeating-linear-gradient(90deg, transparent 0 4px, rgba(0,0,0,0.09) 4px 5px, transparent 5px 10px, rgba(255,255,255,0.05) 10px 11px) right center / var(--cornice) calc(100% - var(--cornice) * 2) no-repeat}
+.lim-area > *{position:relative;z-index:1}
+
+/* il gesso: font a mano, lettere piene, un filo di rilievo (chiaro sotto il tratto, che lo ingrossa; ombra corta scura) */
+.gesso-testo{font-family:"Patrick Hand","Comic Sans MS","Segoe Print",cursive;font-weight:400;color:var(--gesso);
+  text-shadow:0 1px 0 rgba(242,239,230,0.35), 1px 2px 2px rgba(0,0,0,0.35)}
+
+/* la lavagna vuota: data nell'angolo come si fa a scuola, titolo in corsivo, la nota scritta col gesso.
+   Scorre dentro la cornice quando non ci sta (zoom, finestra bassa): niente resta tagliato */
+.ardesia{flex:1;min-height:0;overflow:auto;scrollbar-width:thin;scrollbar-color:rgba(242,239,230,0.35) transparent;
+  display:grid;grid-template-rows:auto auto 1fr;justify-items:center;align-content:stretch;
+  padding:calc(var(--gap) * 1.2) calc(var(--gap) * 3) clamp(12px, 2vh, 24px);text-align:center}
+.lim:not([data-area="vuota"]) .ardesia{display:none}
+.ardesia-data{justify-self:end;margin:0;min-height:1.5em;font-family:"Playwrite IT Moderna","Patrick Hand",cursive;color:var(--gesso);
+  font-size:clamp(22px, 3vh, 36px);line-height:1.5}
+.ardesia-titolo{margin:clamp(4px, 1.2vh, 20px) 0 0;font-family:"Playwrite IT Moderna","Patrick Hand",cursive;font-weight:400;
+  font-size:clamp(48px, 7.4vh, 92px);line-height:1.3;letter-spacing:0}
+/* la riga tirata a mano sotto il titolo: tratto spesso, pieno */
+.ardesia-titolo::after{content:"";display:block;height:0.12em;margin:0.06em auto 0;width:72%;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 16' preserveAspectRatio='none'%3E%3Cpath d='M3 10 C80 5 160 12 240 8 S360 6 397 9' fill='none' stroke='%23F2EFE6' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E") center / 100% 100% no-repeat}
+.lim-vuota{margin:0;align-self:center;max-width:40em;color:var(--gesso);font-size:clamp(24px, 3.2vh, 38px);line-height:1.35}
+
+/* quando dentro c'è un sito, un video o un PDF: il riquadro sta dentro la cornice, i messaggi restano leggibili */
+.lim-area .lim-nota-sito{color:var(--gesso);font-family:"Patrick Hand","IBM Plex Sans",sans-serif;font-size:calc(var(--testo) * 0.95)}
+.lim-area .lim-messaggio{color:var(--inchiostro)}
+
+/* la mensola: legno sotto la lavagna, polvere di gesso sul bordo, due gessetti, un mozzicone e il cancellino.
+   Non prende tocchi né fuoco: è scena */
+.ardesia-mensola{flex:none;order:99;position:relative;height:clamp(14px, 2.3vh, 26px);margin:0 calc(var(--cornice) * -1);pointer-events:none;
+  border-radius:0 0 6px 6px;background:linear-gradient(180deg, var(--legno-chiaro) 0%, var(--legno) 45%, var(--legno-scuro) 100%);
+  box-shadow:0 -2px 4px rgba(0,0,0,0.35)}
+.ardesia-mensola::before{content:"";position:absolute;left:8%;right:8%;top:0;height:2px;pointer-events:none;
+  background:repeating-linear-gradient(90deg, rgba(242,239,230,0.7) 0 2px, transparent 2px 6px);opacity:0.4}
+.gessetto{position:absolute;bottom:58%;left:12%;width:clamp(36px, 4.2vw, 70px);height:clamp(6px, 0.9vh, 10px);border-radius:3px;pointer-events:none;
+  background:linear-gradient(180deg, #FFFFFF, #DAD6CB);box-shadow:0 1px 1px rgba(0,0,0,0.35);transform:rotate(-2deg)}
+.gessetto-giallo{left:calc(12% + clamp(44px, 5vw, 84px));background:linear-gradient(180deg, #FFF3B0, #E3C95C);transform:rotate(3deg)}
+.gessetto-corto{left:31%;width:clamp(16px, 1.6vw, 26px);transform:rotate(-8deg)}
+.cancellino{position:absolute;bottom:58%;right:14%;width:clamp(56px, 6.5vw, 110px);height:clamp(12px, 1.9vh, 22px);border-radius:3px 3px 2px 2px;pointer-events:none;
+  background:linear-gradient(180deg, #A97A4E 0 55%, #3B3F44 55% 100%);box-shadow:0 1px 2px rgba(0,0,0,0.4), inset 0 -2px 0 rgba(255,255,255,0.12)}
+.lim[data-grande="si"] .ardesia-mensola{visibility:hidden}
+/* con dentro un sito, un video o un PDF la mensola si toglie e la cornice si stringe: lo spazio va al riquadro (G22) */
+.lim:not([data-area="vuota"]) .ardesia-mensola{display:none}
+.lim:not([data-area="vuota"]) .lim-area{padding:6px;--cornice:6px}
+
+/* contrasto forzato (Windows a contrasto elevato): fondo e testo di sistema, cornice e scena spente */
+@media (forced-colors: active){
+  .lim-area{background:Canvas;color:CanvasText;border:2px solid CanvasText;box-shadow:none}
+  .lim-area::before,.ardesia-mensola,.ardesia-titolo::after{display:none}
+  .gesso-testo,.lim-area .lim-nota-sito{color:CanvasText;text-shadow:none}
+}
+/* chi chiede più contrasto: fondo uniforme, niente rilievo sulle lettere */
+@media (prefers-contrast: more){
+  .lim-area{background:var(--ardesia-scura)}
+  .gesso-testo{text-shadow:none}
+}
+
+/* ---- 13 · (15/10/2026, piano caa-lavagna) il pannello della chat non c'è più: il tasto «Schede CAA» (nome del 18/10/2026) apre la /caa/
+   nel riquadro come un sito (data-area="caa" segue le regole di ogni area non vuota) ---- */
+
+/* ---- 13b · (18/10/2026, piano caa-lavagna-20261018, rilievo G03) stampa: Ctrl+P sulla pagina madre con la CAA nel riquadro stampa la
+   scheda, non la lavagna. Si nasconde tutto tranne il riquadro #lim-riquadro con il suo iframe, che occupa la pagina intera su
+   fondo bianco, senza ardesia né cornici. Se la CAA non è nel riquadro (area vuota, o un PDF/sito/video, con la CAA nascosta o
+   assente) la regola non scatta e non c'è niente di speciale da fare. Il contenuto dell'iframe lo impagina la /caa/ coi suoi stili. ---- */
+@media print{
+  .lim[data-area="caa"] .lim-orologio,
+  .lim[data-area="caa"] .lim-fono,
+  .lim[data-area="caa"] .lim-timer,
+  .lim[data-area="caa"] .lim-barra-area,
+  .lim[data-area="caa"] .lim-banda,
+  .lim[data-area="caa"] .lim-pannello,
+  .lim[data-area="caa"] .ardesia,
+  .lim[data-area="caa"] .ardesia-mensola,
+  .lim[data-area="caa"] .lim-nota-sito,
+  .lim[data-area="caa"] .lim-messaggio,
+  .lim[data-area="caa"] .lim-aiuto{display:none !important}
+  html:has(.lim[data-area="caa"]),body:has(.lim[data-area="caa"]){height:auto !important;overflow:visible !important;margin:0 !important;background:#fff !important}
+  .lim[data-area="caa"]{display:block !important;position:static !important;width:auto !important;height:auto !important;overflow:visible !important;
+    padding:0 !important;margin:0 !important;background:#fff !important;border:0 !important;box-shadow:none !important}
+  .lim[data-area="caa"] .lim-area{display:block !important;position:static !important;padding:0 !important;margin:0 !important;
+    background:#fff !important;border:0 !important;border-radius:0 !important;box-shadow:none !important;overflow:visible !important}
+  .lim[data-area="caa"] .lim-riquadro{display:block !important;position:static !important;width:100% !important;height:auto !important;
+    min-height:0 !important;background:#fff !important}
+  .lim[data-area="caa"] .lim-riquadro iframe:not([hidden]){display:block !important;width:100% !important;height:100vh !important;
+    border:0 !important;border-radius:0 !important;background:#fff !important}
+}
+
+/* ---- 14 · passo 3 (versione docenti): aiuto «?» con informativa e versione. Sopra l'area e sopra lo strato CHAT;
+   il fonometro resta scoperto. Il timer grande e il pannello delle durate si chiudono quando l'aiuto si apre (lim.js) ---- */
+.lim-aiuto-tasto{min-width:var(--tocco);font-weight:800;font-size:calc(var(--testo) * 1.15)}
+.lim-area > .lim-aiuto{position:absolute;inset:var(--cornice);z-index:4;display:flex;flex-direction:column;gap:var(--gap);
+  padding:var(--gap);border-radius:var(--raggio-g);background:var(--scheda);color:var(--inchiostro);border:3px solid var(--viola);
+  font-family:inherit}
+.lim-area > .lim-aiuto[hidden]{display:none}
+.lim-aiuto-scorre{flex:1 1 auto;min-height:0;overflow:auto;padding:0 calc(var(--gap) * 1.5);font-size:var(--testo);line-height:1.4}
+.lim-aiuto-scorre:focus-visible{outline:3px solid var(--viola);outline-offset:-3px}
+.lim-aiuto-titolo{margin:0.4em 0 0.3em;font-size:1.35em}
+.lim-aiuto-sotto{margin:0.6em 0 0.2em;font-size:1.1em}
+.lim-aiuto-uso,.lim-aiuto-info{margin:0;padding-left:1.4em}
+.lim-aiuto-uso li,.lim-aiuto-info li{margin:0.15em 0}
+.lim-aiuto-frase{margin:0.5em 0 0;font-weight:600}
+.lim-aiuto-piede{margin:0.7em 0 0.4em;color:var(--muto);display:flex;flex-wrap:wrap;gap:0.3em 1.2em}
+.lim-aiuto-link{color:var(--viola-scuro)}
+.lim-aiuto-chiudi{align-self:flex-end;flex:none}
+@media (forced-colors:active){ .lim-area > .lim-aiuto{background:Canvas;color:CanvasText;border-color:CanvasText} }

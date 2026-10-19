@@ -1,0 +1,1135 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CAA Facile: dalla foto alla scheda con i pittogrammi ARASAAC · casinometro.it</title>
+<meta name="description" content="Fotografa la pagina del libro, correggi il testo, stampa la scheda CAA con i pittogrammi ARASAAC. Tutto nel tuo browser, gratis.">
+<meta name="theme-color" content="#E7DFF3">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/casinometro.css">
+</head>
+<body class="tipo-app">
+
+<main id="contenuto">
+<!-- wp:html -->
+<!-- CAA Facile, versione del 18/10/2026 (piano ws caa-lavagna-20261018, v2 dopo il check avverso di Codex, Gemini e Grok):
+     la foto si legge NEL BROWSER con Tesseract.js servito da questa stessa cartella (vendor/), le parole si cercano su
+     api.arasaac.org, i pittogrammi arrivano da static.arasaac.org. Nessun server nostro, nessuna chiave, nessuna memoria. -->
+<div class="pagina-caa">
+<script>
+(function(){var c=false;
+try{c=new URLSearchParams(location.search).get("lim")==="1";}catch(e){c=/[?&]lim=1(&|$)/.test(location.search);}
+if(!c){try{c=window.self!==window.top&&window.top.location.origin===location.origin;}catch(e){c=false;}}
+if(c){document.documentElement.classList.add("caa-lim");}})();
+</script>
+<style>
+/* CSS circoscritto a questa pagina. Modalità compatta = classe caa-lim sull'elemento html (messa dallo script qui sopra
+   con ?lim=1 o quando la pagina è nel riquadro della lavagna, stessa origine): via testata, piede e apertura del sito,
+   caratteri più grandi, bersagli da 56 px. I comandi della pagina restano tutti. */
+html.caa-lim .testa,html.caa-lim .piede,html.caa-lim .salta,html.caa-lim .pagina-caa .apertura{display:none !important;}
+html.caa-lim{font-size:112.5%;}
+html.caa-lim .pagina-caa .caa-app .caa-header{padding:.8rem 1.5rem 1rem;}
+html.caa-lim .pagina-caa .caa-app .caa-header p{max-width:none;}
+html.caa-lim .pagina-caa .caa-app .caa-steps{margin:.8rem 0;}
+html.caa-lim .pagina-caa .caa-app .caa-btn{min-height:56px;}
+html.caa-lim .pagina-caa .caa-app .caa-footer .caa-footer-sito{display:none;}
+.pagina-caa .caa-app .caa-card{animation:none;}
+.pagina-caa .caa-lim-solo{display:none;}
+html.caa-lim .pagina-caa .caa-lim-solo{display:block;margin-top:.6rem;font-size:1rem;}
+.pagina-caa .caa-lim-solo a,.pagina-caa .caa-apri-scheda{color:var(--cm-azione-su);font-weight:600;text-decoration:underline;}
+.pagina-caa .caa-app .caa-steps{list-style:none;}
+.pagina-caa .caa-app .caa-btn{min-height:48px;font-family:inherit;line-height:1.2;cursor:pointer;}
+.pagina-caa .caa-app .caa-btn:focus-visible,.pagina-caa .caa-app .caa-tessera:focus-visible,.pagina-caa .caa-app input:focus-visible,
+.pagina-caa .caa-app textarea:focus-visible,.pagina-caa .caa-app .caa-alt:focus-visible{outline:3px solid var(--cm-viola-scuro);outline-offset:2px;}
+.pagina-caa .caa-app .caa-btn-grande{min-height:64px;font-size:1.25rem;padding:.9rem 2rem;}
+.pagina-caa .caa-app .caa-btn-group{justify-content:space-between;}
+.pagina-caa .caa-app .caa-btn-group.caa-a-destra{justify-content:flex-end;}
+.pagina-caa .caa-app .caa-subtitle,.pagina-caa .caa-app .caa-hint,.pagina-caa .caa-app .caa-nota{max-width:var(--cm-misura);}
+.pagina-caa .caa-app .caa-nota{color:var(--cm-muto);line-height:1.5;margin-top:.8rem;}
+.pagina-caa .caa-app .caa-avviso{min-height:1.4em;margin-top:.6rem;font-weight:600;color:var(--cm-inchiostro);line-height:1.4;}
+.pagina-caa .caa-app .caa-avviso.caa-errore{color:var(--cm-stato-rosso,#b3261e);}
+.pagina-caa .caa-app .caa-contatore{color:var(--cm-muto);font-size:.9375rem;margin-top:.35rem;text-align:right;font-variant-numeric:tabular-nums;}
+.pagina-caa .caa-app .caa-contatore.caa-oltre{color:var(--cm-stato-rosso,#b3261e);font-weight:700;}
+/* passo 1: la zona della foto è una label che contiene l'input (tastiera e lettori di schermo) */
+.pagina-caa .caa-app .caa-upload-zone{display:block;position:relative;text-align:center;cursor:pointer;}
+.pagina-caa .caa-app .caa-upload-zone input{width:100%;height:100%;}
+.pagina-caa .caa-app .caa-upload-zone h4{font-size:1.25rem;}
+.pagina-caa .caa-app .caa-webcam{margin-top:1rem;}
+.pagina-caa .caa-app .caa-webcam video{display:block;width:100%;max-height:60vh;background:#000;border-radius:var(--cm-raggio);}
+.pagina-caa .caa-app .caa-lettura{margin-top:1.2rem;}
+.pagina-caa .caa-app progress{display:block;width:100%;height:14px;margin:.5rem 0;accent-color:var(--cm-azione);}
+.pagina-caa .caa-app .caa-oppure{display:flex;align-items:center;gap:.8rem;margin:1.6rem 0 .8rem;color:var(--cm-muto);font-weight:600;}
+.pagina-caa .caa-app .caa-oppure::before,.pagina-caa .caa-app .caa-oppure::after{content:"";flex:1;border-top:1px solid var(--cm-linea);}
+.pagina-caa .caa-app .caa-privacy{background:var(--cm-carta);border:1px solid var(--cm-linea);border-radius:var(--cm-raggio);padding:1rem 1.2rem;margin-top:1.4rem;line-height:1.55;}
+.pagina-caa .caa-app .caa-privacy h4{font-family:var(--cm-font-titoli);font-size:1.0625rem;font-weight:700;margin-bottom:.4rem;}
+.pagina-caa .caa-app .caa-privacy ul{padding-left:1.2rem;}
+.pagina-caa .caa-app .caa-privacy li{margin-bottom:.25rem;}
+/* passo 2 */
+.pagina-caa .caa-app textarea.caa-testo{display:block;width:100%;min-height:14rem;font-size:1.125rem;line-height:1.5;padding:.8rem 1rem;border:1.5px solid var(--cm-bordo-campo);border-radius:var(--cm-raggio);font-family:inherit;color:inherit;background:var(--cm-scheda);}
+.pagina-caa .caa-app .caa-gesto{background:var(--cm-glicine);border-radius:var(--cm-raggio);padding:.8rem 1rem;margin-top:1rem;line-height:1.5;}
+/* passo 3: i comandi della bozza */
+.pagina-caa .caa-app .caa-comandi{display:flex;flex-wrap:wrap;gap:.8rem 1.4rem;align-items:center;margin:1rem 0 1.2rem;}
+.pagina-caa .caa-app .caa-comandi label{display:inline-flex;align-items:center;gap:.5rem;min-height:44px;font-weight:600;cursor:pointer;}
+.pagina-caa .caa-app .caa-comandi input[type="checkbox"],.pagina-caa .caa-app .caa-comandi input[type="radio"]{width:22px;height:22px;accent-color:var(--cm-azione);}
+.pagina-caa .caa-app .caa-comandi fieldset{border:0;display:inline-flex;gap:.8rem;align-items:center;}
+.pagina-caa .caa-app .caa-comandi legend{font-weight:600;float:left;margin-right:.4rem;}
+.pagina-caa .caa-app .caa-titolo-campo{display:block;width:100%;font-size:1.125rem;padding:.6rem .9rem;border:1.5px solid var(--cm-bordo-campo);border-radius:var(--cm-raggio);font-family:inherit;color:inherit;margin-bottom:.4rem;}
+.pagina-caa .caa-app .caa-banner{display:none;background:#FFF4D6;border:1px solid var(--cm-stato-giallo);border-radius:var(--cm-raggio);padding:.8rem 1rem;margin:.6rem 0 1rem;line-height:1.5;}
+.pagina-caa .caa-app .caa-banner.caa-visibile{display:flex;flex-wrap:wrap;gap:.6rem 1rem;align-items:center;justify-content:space-between;}
+/* la scheda: fondo bianco sempre (anche nel riquadro della lavagna), tessere in righe, una riga per riga di testo */
+.pagina-caa .caa-app .caa-scheda{background:#fff;color:#111;border:1px solid var(--cm-linea);border-radius:var(--cm-raggio);padding:1.2rem;}
+.pagina-caa .caa-app .caa-scheda h3.caa-scheda-titolo{font-family:var(--cm-font-corpo);font-size:1.5rem;font-weight:700;margin-bottom:.8rem;overflow-wrap:anywhere;}
+.pagina-caa .caa-app .caa-riga{display:flex;flex-wrap:wrap;gap:.5rem;align-items:flex-end;margin-bottom:.7rem;break-inside:avoid;page-break-inside:avoid;}
+.pagina-caa .caa-app .caa-tessera{--t:112px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.3rem;width:var(--t);min-height:44px;
+  padding:.3rem;border:1.5px solid #bbb;border-radius:10px;background:#fff;color:#111;font:inherit;cursor:pointer;break-inside:avoid;page-break-inside:avoid;text-align:center;}
+.pagina-caa .caa-app .caa-tessera:hover{border-color:var(--cm-viola);}
+.pagina-caa .caa-app .caa-scheda.caa-grande .caa-tessera{--t:150px;}
+.pagina-caa .caa-app .caa-tessera img{display:block;width:calc(var(--t) - 14px);height:calc(var(--t) - 14px);object-fit:contain;}
+.pagina-caa .caa-app .caa-scheda.caa-bn .caa-tessera img{filter:grayscale(1) contrast(1.2);}
+.pagina-caa .caa-app .caa-tessera .caa-parola{display:block;font-size:1.0625rem;font-weight:700;line-height:1.15;overflow-wrap:anywhere;hyphens:auto;}
+.pagina-caa .caa-app .caa-scheda.caa-grande .caa-parola{font-size:1.25rem;}
+.pagina-caa .caa-app .caa-tessera.caa-senza{justify-content:center;}
+.pagina-caa .caa-app .caa-tessera.caa-piccola{--t:auto;width:auto;min-width:44px;padding:.4rem .6rem;border-style:dashed;}
+.pagina-caa .caa-app .caa-tessera.caa-piccola .caa-parola{font-weight:400;}
+.pagina-caa .caa-app .caa-tessera.caa-attesa{border-style:dotted;}
+.pagina-caa .caa-app .caa-tessera .caa-segno{display:block;font-size:.8125rem;color:#666;font-weight:400;}
+.pagina-caa .caa-app .caa-tessera.caa-errore .caa-segno{color:var(--cm-stato-rosso,#b3261e);}
+.pagina-caa .caa-app .caa-attribuzione{font-size:.8125rem;color:#444;line-height:1.35;margin-top:1rem;border-top:1px solid #ddd;padding-top:.5rem;}
+.pagina-caa .caa-app .caa-attribuzione a{color:inherit;}
+/* il pannello della tessera */
+.pagina-caa .caa-dialog{border:0;border-radius:var(--cm-raggio-g);padding:0;width:min(640px,calc(100vw - 32px));max-height:min(720px,90dvh);background:#fff;color:var(--cm-inchiostro);box-shadow:0 12px 40px rgba(35,26,53,.25);}
+.pagina-caa .caa-dialog::backdrop{background:rgba(35,26,53,.45);}
+.pagina-caa .caa-dialog-in{box-sizing:border-box;display:flex;flex-direction:column;gap:12px;padding:18px;max-height:min(720px,90dvh);overflow:auto;overscroll-behavior:contain;font-family:var(--cm-font-corpo);}
+.pagina-caa .caa-dialog h2{font-family:var(--cm-font-titoli);font-size:1.5rem;line-height:1.15;margin:0;}
+.pagina-caa .caa-dialog .caa-alternative{display:flex;flex-wrap:wrap;gap:.6rem;}
+.pagina-caa .caa-dialog .caa-alt{width:104px;height:104px;padding:6px;border:2px solid #bbb;border-radius:10px;background:#fff;cursor:pointer;}
+.pagina-caa .caa-dialog .caa-alt[aria-pressed="true"]{border-color:var(--cm-azione);box-shadow:0 0 0 2px var(--cm-azione);}
+.pagina-caa .caa-dialog .caa-alt img{width:100%;height:100%;object-fit:contain;display:block;}
+.pagina-caa .caa-dialog .caa-cerca{display:flex;gap:.6rem;flex-wrap:wrap;}
+.pagina-caa .caa-dialog .caa-cerca input,.pagina-caa .caa-dialog .caa-parola-campo{flex:1;min-width:160px;font-size:1.0625rem;padding:.6rem .8rem;border:1.5px solid var(--cm-bordo-campo);border-radius:var(--cm-raggio);font-family:inherit;}
+.pagina-caa .caa-dialog .caa-dialog-azioni{display:flex;flex-wrap:wrap;gap:.6rem;}
+.pagina-caa .caa-dialog .caa-btn{padding:.6rem 1rem;border:1.5px solid var(--cm-azione);border-radius:var(--cm-raggio);background:#fff;color:var(--cm-azione-su);font:inherit;font-weight:600;min-height:44px;cursor:pointer;}
+.pagina-caa .caa-dialog .caa-btn-primary{background:var(--cm-azione);color:#fff;}
+.pagina-caa .caa-dialog .caa-btn-pericolo{border-color:var(--cm-stato-rosso,#b3261e);color:var(--cm-stato-rosso,#b3261e);}
+.pagina-caa .caa-dialog label{font-weight:600;}
+.pagina-caa .caa-dialog .caa-etichetta-riga{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center;}
+/* la via secondaria: il prompt per l'AI */
+.pagina-caa .caa-app details.caa-ai{margin-top:1.6rem;border:1px solid var(--cm-linea);border-radius:var(--cm-raggio);padding:0 1rem;}
+.pagina-caa .caa-app details.caa-ai summary{cursor:pointer;font-weight:600;padding:.9rem 0;min-height:44px;}
+.pagina-caa .caa-app details.caa-ai .caa-ai-in{padding-bottom:1rem;}
+.pagina-caa .caa-app .caa-chip{font-family:inherit;line-height:inherit;min-height:44px;cursor:pointer;}
+.pagina-caa .caa-app textarea.caa-prompt-output{display:block;width:100%;min-height:12rem;resize:vertical;font-size:1rem;white-space:pre-wrap;margin-top:.8rem;font-family:inherit;}
+.pagina-caa .caa-app .caa-ai-link{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1rem;}
+.pagina-caa .caa-app a.caa-btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;}
+.pagina-caa .caa-app .caa-wcag{font-size:.9375rem;color:var(--cm-muto);margin-top:1.2rem;line-height:1.5;}
+@media (max-width:640px){
+  .pagina-caa .caa-app .caa-ai-link,.pagina-caa .caa-app .caa-btn-group{flex-direction:column;}
+  .pagina-caa .caa-app .caa-btn{width:100%;}
+  .pagina-caa .caa-app .caa-tessera{--t:24vw;}                        /* tre tessere per riga a 390 px */
+  .pagina-caa .caa-app .caa-scheda.caa-grande .caa-tessera{--t:38vw;}
+  .pagina-caa .caa-app .caa-scheda{padding:.8rem;}
+}
+@media (prefers-reduced-motion:reduce){.pagina-caa *{transition:none !important;animation:none !important;}}
+/* stampa: resta la sola scheda, A4 verticale, colori conservati, attribuzione come piede di ogni pagina */
+@media print{
+  @page{size:A4 portrait;margin:12mm;}
+  .testa,.piede,.salta,.pagina-caa .apertura,.pagina-caa .caa-header,.pagina-caa .caa-steps,.pagina-caa #caa-passo1,.pagina-caa #caa-passo2,
+  .pagina-caa .caa-comandi,.pagina-caa .caa-banner,.pagina-caa .caa-passo3-comandi,.pagina-caa .caa-nota,.pagina-caa details.caa-ai,
+  .pagina-caa .caa-footer,.pagina-caa .caa-dialog,.pagina-caa .caa-wcag,.pagina-caa #caa-passo3>h2,.pagina-caa .caa-lim-solo,
+  .pagina-caa #caa-passo3>.caa-subtitle,.pagina-caa #caa-passo3>label,.pagina-caa #caaTitolo{display:none !important;}
+  .pagina-caa .caa-app .caa-card{border:0 !important;}
+  html,body{background:#fff !important;}
+  .pagina-caa .caa-app,.pagina-caa .caa-app .caa-body,.pagina-caa .caa-app .caa-card{background:#fff !important;padding:0 !important;margin:0 !important;box-shadow:none !important;max-width:none !important;}
+  .pagina-caa .caa-app .caa-scheda{border:0;padding:12mm 0 0;color:#000;}
+  .pagina-caa .caa-app .caa-tessera{border-color:#999;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .pagina-caa .caa-app .caa-tessera img{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .pagina-caa .caa-app .caa-tessera .caa-segno{display:none;}
+  .pagina-caa .caa-app .caa-tessera .caa-parola{font-size:14pt;}
+  .pagina-caa .caa-app .caa-scheda.caa-grande .caa-parola{font-size:18pt;}
+  .pagina-caa .caa-app .caa-attribuzione{position:fixed;top:0;left:0;right:0;font-size:8pt;border-top:0;border-bottom:1px solid #999;background:#fff;margin:0;padding:0 0 2mm;}
+}
+</style>
+
+
+<div class="caa-app" id="caa-app">
+
+<div class="caa-header">
+    <div class="caa-header-content">
+        <div class="caa-logo">
+            <div class="caa-logo-icon" aria-hidden="true">🎯</div>
+            <h1>CAA Facile <span>per la Scuola</span></h1>
+        </div>
+        <p>Fotografi la pagina del libro, correggi il testo, e la scheda con i pittogrammi ARASAAC è pronta da stampare. Tutto nel tuo browser: gratis, senza account.</p>
+        <p class="caa-lim-solo"><a href="./" target="_blank" rel="noopener noreferrer">Apri la pagina completa in una scheda</a></p>
+    </div>
+</div>
+
+<div class="caa-body">
+    <ol class="caa-steps" aria-label="I tre passi">
+        <li class="caa-step active" id="caa-step-ind-1" aria-current="step"><span class="caa-num" aria-hidden="true">1</span> Foto o testo</li>
+        <li class="caa-step" id="caa-step-ind-2"><span class="caa-num" aria-hidden="true">2</span> Correggi</li>
+        <li class="caa-step" id="caa-step-ind-3"><span class="caa-num" aria-hidden="true">3</span> Scheda</li>
+    </ol>
+
+    <section id="caa-passo1" class="caa-card" aria-labelledby="caa-h-1">
+        <h2 id="caa-h-1"><span class="caa-icon" aria-hidden="true">📸</span> Fotografa la pagina, oppure scrivi il testo</h2>
+        <p class="caa-subtitle">Una foto nitida, con la pagina dritta e una buona luce. Non fotografare nomi di alunni.</p>
+        <label class="caa-upload-zone" id="caaUploadZone">
+            <input type="file" accept="image/*" id="caaImageInput">
+            <span class="caa-upload-icon" aria-hidden="true">📷</span>
+            <h4>Scatta o carica una foto</h4>
+            <p>Dal telefono puoi scattare subito; dal computer scegli il file. JPG, PNG o HEIC.</p>
+            <span class="caa-filename caa-hidden" id="caaFileName" aria-live="polite"></span>
+        </label>
+        <div class="caa-btn-group caa-a-destra" id="caaWebcamRiga" hidden>
+            <button class="caa-btn caa-btn-outline" type="button" id="caaWebcamApri">Usa la webcam</button>
+        </div>
+        <div class="caa-webcam" id="caaWebcam" hidden>
+            <video id="caaVideo" playsinline muted aria-label="Inquadratura della webcam"></video>
+            <div class="caa-btn-group">
+                <button class="caa-btn caa-btn-outline" type="button" id="caaWebcamChiudi">Annulla</button>
+                <button class="caa-btn caa-btn-primary caa-btn-grande" type="button" id="caaScatta">Scatta</button>
+            </div>
+        </div>
+        <img class="caa-preview-img caa-hidden" id="caaPreview" alt="Anteprima della foto scelta">
+        <div class="caa-lettura" id="caaLettura" hidden>
+            <p class="caa-avviso" id="caaLetturaStato" role="status" aria-live="polite"></p>
+            <progress id="caaProgresso" max="100" value="0" aria-labelledby="caaLetturaStato"></progress>
+            <div class="caa-btn-group caa-a-destra">
+                <button class="caa-btn caa-btn-outline" type="button" id="caaAnnullaLettura">Annulla la lettura</button>
+            </div>
+        </div>
+        <p class="caa-avviso" id="caaAvviso1" role="status" aria-live="polite"></p>
+        <p class="caa-oppure" aria-hidden="true">oppure</p>
+        <div class="caa-form-group">
+            <label for="caaTestoLibero">Scrivi o incolla il testo della scheda</label>
+            <textarea class="caa-testo" id="caaTestoLibero" rows="5" placeholder="Una frase per riga. Esempio: Leggi la storia e rispondi alle domande."></textarea>
+        </div>
+        <div class="caa-btn-group caa-a-destra">
+            <button class="caa-btn caa-btn-primary" type="button" id="caaUsaTesto">Usa questo testo</button>
+        </div>
+        <div class="caa-privacy">
+            <h4>Che cosa esce da questa pagina</h4>
+            <ul>
+                <li>La foto viene letta qui, nel tuo browser, e non viene caricata né salvata da nessuna parte. La prima volta il browser scarica il lettore di testo (circa 7 MB) da questo sito.</li>
+                <li>Quando premi «Fai la scheda», le parole del testo vengono cercate su arasaac.org (il sito dei pittogrammi) e le immagini arrivano da lì. Prima di quel tasto non parte nessuna richiesta.</li>
+                <li>Questa pagina non salva la foto né il testo da nessuna parte: nessun account, nessun cookie nostro. Il browser tiene le sue copie temporanee, come per ogni pagina.</li>
+                <li>Se copi il prompt nella tua AI (in fondo al passo 3), il testo va a quel servizio, col tuo account.</li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="caa-passo2" class="caa-card" aria-labelledby="caa-h-2" hidden>
+        <h2 id="caa-h-2"><span class="caa-icon" aria-hidden="true">✏️</span> Correggi il testo</h2>
+        <p class="caa-subtitle">Tieni solo le frasi che servono, una per riga: ogni riga diventa una riga di tessere. Correggi gli errori di lettura.</p>
+        <label class="solo-lettori" for="caaTesto">Testo della scheda</label>
+        <textarea class="caa-testo" id="caaTesto" rows="10" spellcheck="false" autocorrect="off"></textarea>
+        <p class="caa-gesto"><strong>Controlla che non ci siano nomi di alunni.</strong> Premendo «Fai la scheda», le parole del testo vengono cercate su arasaac.org. Le parole con numeri e i nomi con la maiuscola restano senza simbolo finché non le tocchi tu.</p>
+        <p class="caa-avviso" id="caaAvviso2" role="status" aria-live="polite"></p>
+        <div class="caa-btn-group">
+            <button class="caa-btn caa-btn-outline" type="button" id="caaIndietro2">Indietro</button>
+            <button class="caa-btn caa-btn-primary caa-btn-grande" type="button" id="caaFai">Fai la scheda</button>
+        </div>
+    </section>
+
+    <section id="caa-passo3" class="caa-card" aria-labelledby="caa-h-3" hidden>
+        <h2 id="caa-h-3"><span class="caa-icon" aria-hidden="true">🧩</span> Bozza della scheda: controlla ogni simbolo</h2>
+        <p class="caa-subtitle">Tocca una tessera per cambiare il simbolo, la parola scritta, unirla alla parola dopo o toglierla. Poi stampa.</p>
+        <label for="caaTitolo"><strong>Titolo della scheda</strong></label>
+        <input class="caa-titolo-campo" id="caaTitolo" type="text" maxlength="90" autocomplete="off">
+        <div class="caa-comandi">
+            <fieldset>
+                <legend>Tessere</legend>
+                <label><input type="radio" name="caaMisura" value="normale" checked> Normali</label>
+                <label><input type="radio" name="caaMisura" value="grande"> Grandi</label>
+            </fieldset>
+            <label><input type="checkbox" id="caaBn"> Bianco e nero (per fotocopie)</label>
+            <label><input type="checkbox" id="caaPiccole"> Simboli anche per le parole piccole</label>
+            <button class="caa-btn caa-btn-outline" type="button" id="caaAnnullaMossa" disabled>Annulla l'ultima modifica</button>
+        </div>
+        <div class="caa-banner" id="caaBanner" role="status" aria-live="polite">
+            <span id="caaBannerTesto"></span>
+            <button class="caa-btn caa-btn-outline" type="button" id="caaRiprova">Riprova i simboli non riusciti</button>
+        </div>
+        <div class="caa-scheda" id="caa-scheda" aria-label="La scheda">
+            <h3 class="caa-scheda-titolo" id="caaSchedaTitolo"></h3>
+            <div id="caaRighe"></div>
+            <p class="caa-attribuzione">Pittogrammi: Sergio Palao, proprietà Gobierno de Aragón, origine ARASAAC (<a href="https://arasaac.org/terms-of-use">arasaac.org/terms-of-use</a>), licenza CC BY-NC-SA: uso non commerciale, stessa licenza, attribuzione. Il testo resta di chi lo ha scritto. Scheda fatta con CAA Facile, casinometro.it/caa.</p>
+        </div>
+        <p class="caa-avviso" id="caaAvviso3" role="status" aria-live="polite"></p>
+        <div class="caa-btn-group caa-passo3-comandi">
+            <button class="caa-btn caa-btn-outline" type="button" id="caaIndietro3">Modifica il testo</button>
+            <button class="caa-btn caa-btn-outline" type="button" id="caaNuova">Nuova scheda</button>
+            <button class="caa-btn caa-btn-primary caa-btn-grande" type="button" id="caa-stampa" disabled>Stampa o salva in PDF</button>
+        </div>
+        <p class="caa-nota caa-lim-solo">Se la stampa non parte dalla lavagna: <a class="caa-apri-scheda" id="caaApriScheda" href="./" target="_blank" rel="noopener noreferrer">apri la scheda in una nuova scheda del browser</a> (il testo corretto viene con te, i simboli si rifanno).</p>
+        <p class="caa-nota">Dal telefono: scegli «Salva come PDF» nella stampa, poi apri il file sulla lavagna con «Apri un PDF».</p>
+        <p class="caa-nota">Per gli alunni che la useranno, i simboli vanno controllati da chi conosce la CAA: questa è una bozza.</p>
+        <details class="caa-ai">
+            <summary>Preferisci farla fare alla tua AI? Copia il prompt</summary>
+            <div class="caa-ai-in">
+                <p class="caa-hint">Il prompt contiene il testo corretto. Scegli le difficoltà, copia, apri la chat, incolla. Il testo va al servizio che scegli.</p>
+                <div class="caa-form-group">
+                    <span id="caaDifficoltaEtichetta" class="caa-hint"><strong>Tipo di difficoltà</strong> (tocca per attivare o disattivare)</span>
+                    <div class="caa-chips" role="group" aria-labelledby="caaDifficoltaEtichetta">
+                        <button class="caa-chip" type="button" data-id="cognitiva" aria-pressed="false">Disabilità cognitiva</button>
+                        <button class="caa-chip" type="button" data-id="dsa" aria-pressed="false">DSA / Discalculia</button>
+                        <button class="caa-chip" type="button" data-id="lettura" aria-pressed="false">Difficoltà di lettura</button>
+                        <button class="caa-chip" type="button" data-id="attenzione" aria-pressed="false">Difficoltà di attenzione</button>
+                        <button class="caa-chip" type="button" data-id="linguistica" aria-pressed="false">Difficoltà linguistiche</button>
+                        <button class="caa-chip" type="button" data-id="autismo" aria-pressed="false">Autismo</button>
+                        <button class="caa-chip" type="button" data-id="bes" aria-pressed="false">BES generico</button>
+                    </div>
+                </div>
+                <div class="caa-btn-group caa-a-destra">
+                    <button class="caa-btn caa-btn-success" type="button" id="caaCopia">Copia il prompt</button>
+                </div>
+                <p class="caa-avviso" id="caaAvvisoCopia" role="status" aria-live="polite"></p>
+                <textarea class="caa-prompt-output" id="caaPromptOutput" readonly spellcheck="false" aria-label="Il prompt da copiare"></textarea>
+                <div class="caa-ai-link">
+                    <a class="caa-btn caa-btn-outline" href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer">Apri ChatGPT</a>
+                    <a class="caa-btn caa-btn-outline" href="https://gemini.google.com/" target="_blank" rel="noopener noreferrer">Apri Gemini</a>
+                    <a class="caa-btn caa-btn-outline" href="https://claude.ai/" target="_blank" rel="noopener noreferrer">Apri Claude</a>
+                </div>
+            </div>
+        </details>
+        <p class="caa-wcag">Pagina progettata secondo le WCAG 2.2 AA. Verifiche fatte: tastiera, contrasto, etichette, lettura a 320 px, zoom 200%, spaziatura del testo, axe-core. Non verificata con un lettore di schermo.</p>
+    </section>
+</div>
+
+<dialog class="caa-dialog" id="caaDialog" aria-labelledby="caaDialogTitolo">
+    <div class="caa-dialog-in">
+        <h2 id="caaDialogTitolo">Tessera</h2>
+        <p class="caa-hint" id="caaDialogStato" role="status" aria-live="polite"></p>
+        <div class="caa-alternative" id="caaAlternative" role="group" aria-label="Simboli fra cui scegliere"></div>
+        <form class="caa-cerca" id="caaCercaForm">
+            <label class="solo-lettori" for="caaCercaCampo">Cerca un altro simbolo</label>
+            <input id="caaCercaCampo" type="text" placeholder="Cerca un altro simbolo, es. leggere" autocomplete="off">
+            <button class="caa-btn" type="submit">Cerca</button>
+        </form>
+        <div class="caa-etichetta-riga">
+            <label for="caaParolaCampo">Parola scritta sotto il simbolo</label>
+            <input class="caa-parola-campo" id="caaParolaCampo" type="text" maxlength="40" autocomplete="off">
+            <button class="caa-btn" type="button" id="caaParolaOk">Cambia</button>
+        </div>
+        <div class="caa-dialog-azioni">
+            <button class="caa-btn" type="button" id="caaUnisci">Unisci con la parola dopo</button>
+            <button class="caa-btn" type="button" id="caaSenza">Senza simbolo</button>
+            <button class="caa-btn caa-btn-pericolo" type="button" id="caaTogli">Togli la parola</button>
+            <button class="caa-btn caa-btn-primary" type="button" id="caaDialogChiudi">Chiudi</button>
+        </div>
+    </div>
+</dialog>
+
+<div class="caa-footer">
+    <span class="caa-footer-sito"><a href="https://casinometro.it/">casinometro.it</a> · </span>Pittogrammi <a href="https://arasaac.org/" target="_blank" rel="noopener noreferrer">ARASAAC</a> (CC BY-NC-SA) · Lettura del testo con Tesseract.js (Apache-2.0, <a href="vendor/LICENSE-tesseract.js.txt">licenza</a>)
+</div>
+</div>
+
+<script>
+(function (radice) {
+"use strict";
+/* ---------- 1 · parte pura (gira anche in node per strumenti/prova_caa.py via module.exports): parole, lemmi, prompt ---------- */
+
+/* parole «vuote» (articoli, preposizioni, congiunzioni, pronomi corti): tessera piccola, solo testo, salvo l'interruttore */
+var VUOTE = ("il lo la i gli le l un uno una un' del dello della dei degli delle dal dallo dalla dai dagli dalle al allo alla ai agli alle " +
+  "nel nello nella nei negli nelle sul sullo sulla sui sugli sulle di a da in con su per tra fra e ed o od ma né che chi cui " +
+  "non si mi ti ci vi ne lo la li le gli me te se è sono sei siamo siete ha hai ho hanno abbiamo avete l' c' d' n' s' v' m' t' un' dell' nell' all' dall' sull' quest' quell'").split(" ");
+var VUOTE_SET = {};
+VUOTE.forEach(function (p) { VUOTE_SET[p] = true; });
+
+/* consegne scolastiche e forme verbali frequenti: forma -> infinito (G01). Si cerca PRIMA l'infinito, poi la forma. */
+var CONSEGNE = {
+  leggi: "leggere", legge: "leggere", leggete: "leggere", leggiamo: "leggere",
+  scrivi: "scrivere", scrive: "scrivere", scrivete: "scrivere", scriviamo: "scrivere",
+  colora: "colorare", colorate: "colorare", coloriamo: "colorare", colorato: "colorare",
+  completa: "completare", completate: "completare", completiamo: "completare",
+  collega: "collegare", collegate: "collegare", cerchia: "cerchiare", cerchiate: "cerchiare",
+  conta: "contare", contate: "contare", contiamo: "contare", disegna: "disegnare", disegnate: "disegnare", disegniamo: "disegnare",
+  osserva: "osservare", osservate: "osservare", guarda: "guardare", guardate: "guardare", guardiamo: "guardare",
+  rispondi: "rispondere", risponde: "rispondere", rispondete: "rispondere", rispondiamo: "rispondere",
+  calcola: "calcolare", calcolate: "calcolare", ascolta: "ascoltare", ascoltate: "ascoltare", ascoltiamo: "ascoltare",
+  ripeti: "ripetere", ripetete: "ripetere", trova: "trovare", trovate: "trovare", indica: "indicare", indicate: "indicare",
+  segna: "segnare", segnate: "segnare", ritaglia: "ritagliare", ritagliate: "ritagliare", incolla: "incollare", incollate: "incollare",
+  unisci: "unire", unite: "unire", ordina: "ordinare", ordinate: "ordinare", confronta: "confrontare", confrontate: "confrontare",
+  misura: "misurare", misurate: "misurare", sottolinea: "sottolineare", sottolineate: "sottolineare", copia: "copiare", copiate: "copiare",
+  racconta: "raccontare", raccontate: "raccontare", descrivi: "descrivere", descrivete: "descrivere", dividi: "dividere", dividete: "dividere",
+  scegli: "scegliere", scegliete: "scegliere", cancella: "cancellare", cancellate: "cancellare", riscrivi: "riscrivere", riscrivete: "riscrivere",
+  completare: "completare", spiega: "spiegare", spiegate: "spiegare", pensa: "pensare", pensate: "pensare", prova: "provare", provate: "provare",
+  gioca: "giocare", giochiamo: "giocare", giocate: "giocare", canta: "cantare", cantiamo: "cantare", cantate: "cantare",
+  mangia: "mangiare", mangiamo: "mangiare", mangiate: "mangiare", beve: "bere", bevi: "bere", beviamo: "bere",
+  dorme: "dormire", dormi: "dormire", dormiamo: "dormire", corre: "correre", corri: "correre", corriamo: "correre",
+  va: "andare", vai: "andare", andiamo: "andare", andate: "andare", vanno: "andare", viene: "venire", vieni: "venire", veniamo: "venire",
+  fa: "fare", fai: "fare", facciamo: "fare", fate: "fare", fanno: "fare", dice: "dire", dici: "dire", diciamo: "dire",
+  vede: "vedere", vedi: "vedere", vediamo: "vedere", vedete: "vedere", apri: "aprire", apre: "aprire", aprite: "aprire", chiudi: "chiudere", chiude: "chiudere",
+  prendi: "prendere", prende: "prendere", prendete: "prendere", metti: "mettere", mette: "mettere", mettete: "mettere",
+  tocca: "toccare", toccate: "toccare", taglia: "tagliare", tagliate: "tagliare", piega: "piegare", piegate: "piegare",
+  impara: "imparare", impariamo: "imparare", studia: "studiare", studiamo: "studiare", lavora: "lavorare", lavoriamo: "lavorare",
+  usa: "usare", usate: "usare", usiamo: "usare", cerca: "cercare", cercate: "cercare", cerchiamo: "cercare"
+};
+/* desinenze generiche -> candidati infinito e singolare (si provano in ordine, ognuno con una richiesta, fino a 4) */
+var DESINENZE = [
+  ["iscono", ["ire"]], ["isce", ["ire"]], ["isci", ["ire"]], ["isco", ["ire"]],
+  ["iamo", ["iare", "are", "ere", "ire"]], ["ate", ["are"]], ["ete", ["ere"]], ["ite", ["ire"]],
+  ["ano", ["are"]], ["ono", ["ere", "ire"]], ["ato", ["are"]], ["ata", ["are"]], ["ati", ["are"]], ["uto", ["ere"]], ["ito", ["ire"]],
+  ["o", ["are", "ere", "ire"]], ["e", ["ere", "ire", "are", "a"]], ["i", ["are", "ere", "ire", "o", "e"]], ["a", ["are"]]
+];
+
+function candidati(chiave) {
+  /* i lemmi da provare dopo la parola stessa, senza doppioni: consegne, poi desinenze */
+  var out = [], visti = {};
+  function metti(c) { if (c && c !== chiave && c.length >= 3 && !visti[c]) { visti[c] = true; out.push(c); } }
+  if (CONSEGNE[chiave]) metti(CONSEGNE[chiave]);
+  for (var i = 0; i < DESINENZE.length; i++) {
+    var d = DESINENZE[i][0];
+    if (chiave.length > d.length + 1 && chiave.slice(-d.length) === d) {
+      var radice = chiave.slice(0, -d.length);
+      DESINENZE[i][1].forEach(function (s) { metti(radice + s); });
+      break;
+    }
+  }
+  return out.slice(0, 4);
+}
+
+var PUNTEGGIATURA_INIZIO = /^[«»"“”'‘’()\[\]{}.,;:!?…\-–—]+/;
+var PUNTEGGIATURA_FINE = /[«»"“”'‘’()\[\]{}.,;:!?…\-–—]+$/;
+var APOSTROFO = /^([A-Za-zÀ-ÿ]{1,5}['’])(.+)$/;
+
+function tokenizza(testo) {
+  /* righe -> parole. Ogni parola: etichetta (com'è scritta, punteggiatura compresa), chiave (minuscola, senza
+     punteggiatura), classe: "parola" | "vuota" | "numero" | "nome" (maiuscola non a inizio riga, G07). */
+  var righe = [];
+  String(testo || "").split(/\r?\n/).forEach(function (riga) {
+    var pezzi = riga.trim().split(/\s+/).filter(Boolean), parole = [];
+    pezzi.forEach(function (p) {
+      var m = p.match(APOSTROFO), parti = m ? [m[1], m[2]] : [p];
+      parti.forEach(function (q, k) {
+        var nudo = q.replace(PUNTEGGIATURA_INIZIO, "").replace(PUNTEGGIATURA_FINE, "");
+        if (!nudo) return;
+        var chiave = nudo.toLowerCase().replace(/’/g, "'");
+        if (m && k === 0) chiave = m[1].toLowerCase().replace(/’/g, "'").replace(PUNTEGGIATURA_INIZIO, "");   /* «d'», «c'», «l'»: con l'apostrofo, come in VUOTE */
+        var etichetta = q.replace(/[.,;:…«»"“”()\[\]{}]+$/, "").replace(PUNTEGGIATURA_INIZIO, "");   /* sotto il simbolo: niente punto o virgola finale; ? e ! restano */
+        var classe = "parola";
+        if (/\d/.test(nudo)) classe = "numero";
+        else if (VUOTE_SET[chiave]) classe = "vuota";
+        else if (parole.length > 0 && /^[A-ZÀ-Ý]/.test(nudo)) classe = "nome";
+        parole.push({ etichetta: etichetta || nudo, chiave: chiave, classe: classe });
+      });
+    });
+    if (parole.length) righe.push(parole);
+  });
+  return righe;
+}
+
+var CAA_DIFFICOLTA = [
+  { id: "cognitiva", nome: "Disabilità cognitiva", regola: "3 esercizi al massimo, numeri piccoli, un esempio svolto identico prima di ogni esercizio, un pittogramma a ogni passaggio" },
+  { id: "dsa", nome: "DSA / Discalculia", regola: "numeri in colonna su una griglia, segni delle operazioni evidenziati, spazio per i passaggi scritti, carattere senza grazie" },
+  { id: "lettura", nome: "Difficoltà di lettura", regola: "pochissimo testo, un pittogramma per ogni istruzione, carattere di almeno 16 punti, testo allineato a sinistra" },
+  { id: "attenzione", nome: "Difficoltà di attenzione", regola: "una pagina sola, ogni esercizio nel suo riquadro con una casella «fatto» da spuntare" },
+  { id: "linguistica", nome: "Difficoltà linguistiche", regola: "un pittogramma per ogni parola chiave, frasi di al massimo 5 parole, niente sinonimi, glossario visivo in cima" },
+  { id: "autismo", nome: "Autismo", regola: "struttura prevedibile e ripetitiva, istruzioni esplicite passo per passo, inizio e fine di ogni sezione ben segnati" },
+  { id: "bes", nome: "BES generico", regola: "equilibrio fra immagini e testo, almeno un esempio svolto, spazio ampio per le risposte, numerazione chiara" }
+];
+
+function caaComponi(d) {
+  d = d || {};
+  var ids = Array.isArray(d.difficolta) ? d.difficolta : [];
+  var scelte = CAA_DIFFICOLTA.filter(function (x) { return ids.indexOf(x.id) >= 0; });
+  if (!scelte.length) scelte = CAA_DIFFICOLTA.filter(function (x) { return x.id === "bes"; });
+  var testo = String(d.testo || "").trim();
+  var r = [];
+  r.push("Prepara una scheda accessibile con pittogrammi CAA (ARASAAC) per uno studente con le difficoltà indicate sotto.");
+  r.push(testo ? "Parti da questo testo, preso dalla scheda originale:" : "Non ho un testo: crea la scheda da zero sull'argomento che ti dico in chat.");
+  if (testo) { r.push(""); r.push(testo); }
+  r.push("");
+  r.push("Difficoltà: " + scelte.map(function (x) { return x.nome; }).join(", "));
+  r.push("");
+  r.push("Regole della scheda");
+  r.push("1. Ogni gruppo di esercizi inizia con un riquadro di istruzioni: da 3 a 5 pittogrammi dei verbi d'azione (guarda, leggi, conta, scrivi, calcola, disegna, misura, completa, colora, collega, cerchia) e la consegna in frasi imperative brevi, una per riga.");
+  r.push("2. Prima degli esercizi un esempio svolto. Esercizi dal più facile al più difficile, al massimo 4 o 5, con spazio ampio per rispondere.");
+  r.push("3. Titolo con l'argomento, spazio per nome e data, esercizi numerati in riquadri.");
+  r.push("4. Frasi di al massimo 10 parole, concrete, senza subordinate.");
+  r.push("5. Stampa su A4 in bianco e nero: carattere di almeno 14 punti, interlinea ampia, al massimo 2 pagine. Stesso layout per ogni esercizio, varia solo il contenuto.");
+  r.push("6. Se due adattamenti si contraddicono, vale il più restrittivo.");
+  r.push("");
+  r.push("Adattamenti");
+  scelte.forEach(function (x) { r.push("- " + x.nome + ": " + x.regola + "."); });
+  r.push("");
+  r.push("Consegna");
+  r.push("Dammi un file Word (.docx) da scaricare. Per i pittogrammi usa emoji o il verbo in maiuscolo: le immagini ARASAAC le metto io.");
+  r.push("Se non puoi creare file, scrivi la scheda in testo coi pittogrammi fra parentesi quadre, come [GUARDA], e intitolala «bozza da completare».");
+  r.push("In fondo alla scheda scrivi: Pittogrammi di Sergio Palao per ARASAAC (arasaac.org), Gobierno de Aragón, licenza CC BY-NC-SA.");
+  return r.join("\n");
+}
+
+var api = { VUOTE: VUOTE, CONSEGNE: CONSEGNE, candidati: candidati, tokenizza: tokenizza, DIFFICOLTA: CAA_DIFFICOLTA, componi: caaComponi };
+if (typeof module !== "undefined" && module.exports) { module.exports = api; return; }
+
+/* ---------- 2 · la pagina ---------- */
+/* 18/10/2026, revisione avversa del codice (Codex sol ultra, note/caa-lavagna-20261018/TRIAGE.md, sezione codice):
+   letture con identificatore (R02), timeout sul worker (R03), ricerche e immagini legate a tessera e generazione
+   (R04, R10, R11, R12, R17), annulla che riavvia le ricerche e rimette le scelte manuali (R01, R09), webcam senza
+   doppioni e spenta quando il riquadro è nascosto (R06, R08), niente controllo ortografico sui campi (R07),
+   testo esportato dalle tessere (R14), nomi delle alternative dalla parola trovata (R15), fuoco conservato (R16). */
+var win = radice, doc = win.document;
+win.CaaFacile = api;
+if (!doc) return;
+
+var $ = function (id) { return doc.getElementById(id); };
+var compatta = doc.documentElement.classList.contains("caa-lim");
+var BASE_VENDOR = new URL("vendor/", win.location.href).href;      /* assoluto: il worker risolve i percorsi dalla sua posizione */
+var VERSIONE_VENDOR = "7.0.0";
+var API = "https://api.arasaac.org/v1/pictograms/it/";           /* prefisso ammesso dal cancello (profilo caa) */
+var STATIC = "https://static.arasaac.org/pictograms/";
+var PARALLELE = 3, TIMEOUT_MS = 6000, TENTATIVI = 2, LATO_MAX = 2400, TIMEOUT_WORKER_MS = 120000;
+
+/* stato */
+var righe = [];                 /* [[tessera...]] tessera: {etichetta, chiave, classe, stato, alternative:[id], scelto:id|null, cercata, rev} */
+var scelteManuali = {};         /* chiave -> {id|null, cerca} (G05): sopravvivono alla rigenerazione */
+var generazione = 0;            /* C05: le risposte di una generazione vecchia non toccano la scheda nuova */
+var controllori = [];           /* AbortController delle richieste della generazione corrente (R17) */
+var mossaPrecedente = null;     /* snapshot per «Annulla l'ultima modifica» */
+var worker = null, letturaId = 0, letturaInCorso = false, caricamentoTesseract = null;
+var flusso = null, richiestaWebcam = 0, spegniWebcam = null, urlAnteprima = null;
+var tesseraAperta = null;       /* {r, i, t} nel dialog */
+var cacheRicerche = {};         /* chiave -> [id] per la sessione (in memoria, mai su disco) */
+var parolaDi = {};              /* id -> parola trovata da ARASAAC (per i nomi accessibili delle alternative, R15) */
+
+/* ---- passi ---- */
+function vaiPasso(n) {
+  [1, 2, 3].forEach(function (i) {
+    $("caa-passo" + i).hidden = (i !== n);
+    var ind = $("caa-step-ind-" + i);
+    ind.className = "caa-step" + (i < n ? " done" : "") + (i === n ? " active" : "");
+    if (i === n) ind.setAttribute("aria-current", "step"); else ind.removeAttribute("aria-current");
+  });
+  var h = $("caa-h-" + n);
+  h.setAttribute("tabindex", "-1");
+  h.focus({ preventScroll: true });
+  var ancora = compatta ? $("caa-passo" + n) : $("caa-app");
+  try { win.scrollTo({ top: ancora.offsetTop - 20, behavior: "smooth" }); } catch (e) { win.scrollTo(0, ancora.offsetTop - 20); }
+}
+function avviso(id, testo, errore) { var el = $(id); el.textContent = testo || ""; el.classList.toggle("caa-errore", !!errore); }
+/* niente controllo ortografico: Chrome con il controllo avanzato manderebbe il testo a Google (R07) */
+Array.prototype.forEach.call(doc.querySelectorAll("#caa-app textarea, #caa-app input[type=text]"), function (c) {
+  c.setAttribute("spellcheck", "false"); c.setAttribute("autocorrect", "off"); c.setAttribute("autocapitalize", "off");
+});
+
+/* ---- passo 1: foto, webcam, lettura ---- */
+var input = $("caaImageInput"), zona = $("caaUploadZone"), anteprima = $("caaPreview"), nomeFile = $("caaFileName");
+
+function caricaTesseract() {
+  /* K09: parte al primo tocco sul tasto della foto, non al caricamento della pagina; una volta sola */
+  if (win.Tesseract) return Promise.resolve();
+  if (caricamentoTesseract) return caricamentoTesseract;
+  caricamentoTesseract = new Promise(function (ok, no) {
+    var s = doc.createElement("script");
+    s.src = "vendor/tesseract.min.js?v=" + VERSIONE_VENDOR;
+    s.async = true;
+    s.onload = function () { ok(); };
+    s.onerror = function () { caricamentoTesseract = null; no(new Error("Non riesco a scaricare il lettore di testo.")); };
+    doc.head.appendChild(s);
+  });
+  return caricamentoTesseract;
+}
+zona.addEventListener("pointerdown", function () { caricaTesseract().catch(function () {}); });
+zona.addEventListener("focusin", function () { caricaTesseract().catch(function () {}); });
+
+function mostraLettura(stato, perc) {
+  $("caaLettura").hidden = false;
+  $("caaLetturaStato").textContent = stato;
+  $("caaProgresso").value = Math.round(perc * 100);
+}
+
+function preparaCanvas(sorgente, larghezza, altezza) {
+  /* solo riduzione (lato lungo fino a LATO_MAX, mai ingrandire) e scala di grigi: Tesseract binarizza da sé (G11, C04) */
+  var scala = Math.min(1, LATO_MAX / Math.max(larghezza, altezza));
+  var c = doc.createElement("canvas");
+  c.width = Math.max(1, Math.round(larghezza * scala));
+  c.height = Math.max(1, Math.round(altezza * scala));
+  var ctx = c.getContext("2d");
+  ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, c.width, c.height);
+  try { ctx.filter = "grayscale(1)"; } catch (e) { /* senza filtro va bene lo stesso */ }
+  ctx.drawImage(sorgente, 0, 0, c.width, c.height);
+  return c;
+}
+
+function daFile(file) {
+  if (win.createImageBitmap) {
+    return win.createImageBitmap(file, { imageOrientation: "from-image" }).catch(function () { return win.createImageBitmap(file); })
+      .then(function (bm) { var c = preparaCanvas(bm, bm.width, bm.height); if (bm.close) bm.close(); return c; });
+  }
+  return new Promise(function (ok, no) {
+    var url = URL.createObjectURL(file), im = new Image();
+    im.onload = function () { try { ok(preparaCanvas(im, im.naturalWidth, im.naturalHeight)); } finally { URL.revokeObjectURL(url); } };
+    im.onerror = function () { URL.revokeObjectURL(url); no(new Error("Non riesco ad aprire questa immagine.")); };
+    im.src = url;
+  });
+}
+
+function conTimeoutPromessa(p, ms, messaggio) {
+  return new Promise(function (ok, no) {
+    var t = win.setTimeout(function () { no(new Error(messaggio)); }, ms);
+    p.then(function (v) { win.clearTimeout(t); ok(v); }, function (e) { win.clearTimeout(t); no(e); });
+  });
+}
+
+function leggi(canvas) {
+  /* ogni lettura ha il suo identificatore: i callback di una lettura vecchia non toccano quella nuova (R02) */
+  if (letturaInCorso) { avviso("caaAvviso1", "Sto già leggendo una foto: aspetta o premi «Annulla la lettura».", true); return; }
+  var id = ++letturaId, mio = null;
+  letturaInCorso = true;
+  mostraLettura("Preparo la lettura (la prima volta scarica circa 7 MB, una volta sola).", 0);
+  avviso("caaAvviso1", "");
+  var inizio = Date.now();
+  var viva = function () { return id === letturaId; };
+  var creazione = caricaTesseract().then(function () {
+    if (!viva()) throw new Error("annullata");
+    return win.Tesseract.createWorker("ita", 1, {
+      workerPath: BASE_VENDOR + "worker.min.js?v=" + VERSIONE_VENDOR,
+      corePath: BASE_VENDOR.replace(/\/$/, ""),
+      langPath: BASE_VENDOR.replace(/\/$/, ""),
+      cacheMethod: "none", gzip: false, workerBlobURL: false,
+      logger: function (m) {
+        if (!m || !viva()) return;
+        var t = m.status === "recognizing text" ? "Sto leggendo la foto su questo computer." :
+                m.status === "loading tesseract core" ? "Scarico il lettore di testo." :
+                (m.status && m.status.indexOf("lang") >= 0) ? "Carico la lingua italiana." : "Preparo la lettura.";
+        mostraLettura(t, typeof m.progress === "number" ? m.progress : 0);
+      }
+    });
+  });
+  /* R03: se il worker non arriva (lingua in 404, rete ferma) la promessa non resta appesa per sempre */
+  conTimeoutPromessa(creazione, TIMEOUT_WORKER_MS, "il lettore di testo non si è avviato entro due minuti").then(function (w) {
+    mio = w;
+    if (!viva()) { try { w.terminate(); } catch (e) { /* già chiuso */ } throw new Error("annullata"); }
+    worker = w;
+    return w.recognize(canvas);
+  }).then(function (ris) {
+    if (!viva()) return;
+    var testo = (ris && ris.data && ris.data.text) ? ris.data.text : "";
+    var secondi = Math.round((Date.now() - inizio) / 1000);
+    chiudiWorker(mio);
+    $("caaLettura").hidden = true;
+    letturaInCorso = false;
+    testo = testo.replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+    if (!testo) { avviso("caaAvviso1", "Non ho trovato testo nella foto. Prova con più luce e la pagina dritta, oppure scrivi il testo qui sotto.", true); return; }
+    $("caaTesto").value = testo;
+    avviso("caaAvviso2", "Letto in " + secondi + " secondi. Controlla e correggi: la lettura sbaglia qualche lettera.");
+    vaiPasso(2);
+  }).catch(function (e) {
+    chiudiWorker(mio);
+    if (!viva()) return;                                                 /* annullata o superata: lo ha già detto chi l'ha fermata */
+    $("caaLettura").hidden = true;
+    letturaInCorso = false;
+    if (e && e.message === "annullata") { avviso("caaAvviso1", "Lettura annullata. Puoi scrivere il testo qui sotto."); return; }
+    avviso("caaAvviso1", "La lettura non è riuscita (" + ((e && e.message) || "errore") + "). Scrivi o incolla il testo qui sotto.", true);
+  });
+}
+function chiudiWorker(w) {
+  var da = w || worker;
+  if (da) { try { da.terminate(); } catch (e) { /* già chiuso */ } }
+  if (da === worker) worker = null;
+}
+$("caaAnnullaLettura").addEventListener("click", function () {
+  letturaId++;                                                           /* la lettura in corso diventa vecchia: i suoi callback non toccano più niente */
+  chiudiWorker(); $("caaLettura").hidden = true; letturaInCorso = false; input.value = "";
+  avviso("caaAvviso1", "Lettura annullata. Puoi scrivere il testo qui sotto, o scegliere un'altra foto.");
+});
+
+function mostraAnteprima(src) {
+  if (urlAnteprima) { try { URL.revokeObjectURL(urlAnteprima); } catch (e) { /* niente */ } urlAnteprima = null; }   /* R19 */
+  anteprima.src = src; anteprima.classList.remove("caa-hidden");
+}
+input.addEventListener("change", function () {
+  var file = input.files && input.files[0];
+  if (!file || letturaInCorso) return;
+  nomeFile.textContent = "✓ " + file.name;
+  nomeFile.classList.remove("caa-hidden");
+  zona.classList.add("has-image");
+  urlAnteprima = null;
+  var url = URL.createObjectURL(file);
+  mostraAnteprima(url); urlAnteprima = url;
+  daFile(file).then(leggi).catch(function (e) { avviso("caaAvviso1", (e && e.message) || "Non riesco ad aprire questa immagine.", true); });
+});
+
+/* webcam (C13, R06, R08): solo se il browser la offre; una richiesta per volta; tracce sempre fermate; si spegne da sola
+   dopo due minuti e quando il video non è più visibile (per esempio il riquadro della lavagna nascosto) */
+if (win.navigator && win.navigator.mediaDevices && win.navigator.mediaDevices.getUserMedia) { $("caaWebcamRiga").hidden = false; }
+function fermaWebcam() {
+  win.clearTimeout(spegniWebcam); richiestaWebcam++;                    /* una richiesta ancora in volo arriverà superata e verrà fermata */
+  if (flusso) { flusso.getTracks().forEach(function (t) { t.stop(); }); flusso = null; }
+  $("caaVideo").srcObject = null; $("caaWebcam").hidden = true;
+}
+$("caaWebcamApri").addEventListener("click", function () {
+  if (flusso) { $("caaScatta").focus(); return; }
+  caricaTesseract().catch(function () {});
+  var mia = ++richiestaWebcam;
+  win.navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment", width: { ideal: 1920 } }, audio: false }).then(function (s) {
+    var video = $("caaVideo");
+    if (mia !== richiestaWebcam || flusso) { s.getTracks().forEach(function (t) { t.stop(); }); return; }   /* richiesta superata: si ferma subito */
+    flusso = s; video.srcObject = s; $("caaWebcam").hidden = false; video.play().catch(function () {}); $("caaScatta").focus();
+    spegniWebcam = win.setTimeout(function () { fermaWebcam(); avviso("caaAvviso1", "Webcam spenta dopo due minuti senza scatto. Riaprila quando serve."); }, 120000);
+  }).catch(function (e) {
+    if (mia !== richiestaWebcam) return;
+    avviso("caaAvviso1", (e && e.name === "NotAllowedError") ? "La webcam non è stata autorizzata. Puoi caricare una foto o scrivere il testo." : "Nessuna webcam disponibile. Puoi caricare una foto o scrivere il testo.", true);
+  });
+});
+$("caaWebcamChiudi").addEventListener("click", function () { fermaWebcam(); $("caaWebcamApri").focus(); });
+$("caaScatta").addEventListener("click", function () {
+  var v = $("caaVideo");
+  if (!v.videoWidth) { avviso("caaAvviso1", "La webcam non è ancora pronta: riprova fra un attimo.", true); return; }
+  if (letturaInCorso) { avviso("caaAvviso1", "Sto già leggendo una foto: aspetta o premi «Annulla la lettura».", true); return; }
+  var c = preparaCanvas(v, v.videoWidth, v.videoHeight);
+  fermaWebcam();
+  mostraAnteprima(c.toDataURL("image/jpeg", 0.85));
+  nomeFile.textContent = "✓ Foto dalla webcam"; nomeFile.classList.remove("caa-hidden");
+  leggi(c);
+});
+win.addEventListener("pagehide", fermaWebcam);
+/* R08: nel riquadro nascosto della lavagna (display:none) il video non ha più offsetParent: la webcam si spegne entro un secondo */
+win.setInterval(function () { if (flusso && (!$("caaVideo").offsetParent || doc.visibilityState === "hidden")) fermaWebcam(); }, 1000);
+doc.addEventListener("visibilitychange", function () { if (doc.visibilityState === "hidden" && flusso) fermaWebcam(); });
+
+$("caaUsaTesto").addEventListener("click", function () {
+  var t = $("caaTestoLibero").value.trim();
+  if (!t) { avviso("caaAvviso1", "Scrivi almeno una riga di testo.", true); $("caaTestoLibero").focus(); return; }
+  $("caaTesto").value = t; avviso("caaAvviso2", ""); vaiPasso(2);
+});
+
+/* #testo= (C06): il testo corretto arriva dalla lavagna nel frammento, non lascia il browser; nessuna ricerca automatica */
+(function () {
+  var h = win.location.hash || "";
+  if (h.indexOf("#testo=") === 0) {
+    try { var t = decodeURIComponent(h.slice(7)); if (t.trim()) { $("caaTesto").value = t; avviso("caaAvviso2", "Testo ricevuto dalla lavagna: controlla e premi «Fai la scheda»."); vaiPasso(2); } } catch (e) { /* frammento non leggibile */ }
+    try { win.history.replaceState(null, "", win.location.pathname + win.location.search); } catch (e) { /* niente */ }
+  }
+})();
+
+/* ---- passo 2 ---- */
+$("caaIndietro2").addEventListener("click", function () { vaiPasso(1); });
+$("caaFai").addEventListener("click", function () {
+  var t = $("caaTesto").value;
+  if (!t.trim()) { avviso("caaAvviso2", "Il testo è vuoto: scrivi almeno una riga.", true); $("caaTesto").focus(); return; }
+  var tok = tokenizza(t);
+  if (!tok.length) { avviso("caaAvviso2", "Non trovo parole nel testo.", true); return; }
+  avviso("caaAvviso2", "");
+  costruisci(tok);
+  if (!$("caaTitolo").value.trim()) $("caaTitolo").value = tok[0].map(function (p) { return p.etichetta; }).join(" ").slice(0, 90);   /* la prima riga intera */
+  aggiornaTitolo();
+  vaiPasso(3);
+});
+
+/* ---- rete: coda con parallelismo, timeout, tentativi, generazione (G10, K07, C05, R17) ---- */
+var coda = [], attive = 0;
+function nuovoControllore() {
+  var c = new AbortController(); controllori.push(c);
+  c.scadenza = win.setTimeout(function () { c.abort(); }, TIMEOUT_MS);
+  return c;
+}
+function liberaControllore(c) { win.clearTimeout(c.scadenza); var i = controllori.indexOf(c); if (i >= 0) controllori.splice(i, 1); }
+function fermaRichieste() {
+  coda.length = 0;
+  controllori.forEach(function (c) { win.clearTimeout(c.scadenza); try { c.abort(); } catch (e) { /* niente */ } });
+  controllori = [];
+}
+function chiamata(url, tentativo, gen) {
+  var c = nuovoControllore();
+  return win.fetch(url, { signal: c.signal, mode: "cors", credentials: "omit", cache: "default" }).then(function (r) {
+    liberaControllore(c);
+    if (r.status === 404) return [];                                     /* ARASAAC: nessun risultato */
+    if (!r.ok) throw new Error("http " + r.status);
+    return r.json();
+  }).then(function (j) {
+    if (!Array.isArray(j)) return [];
+    var ids = [];
+    j.forEach(function (x) {
+      if (!x || typeof x._id !== "number") return;
+      ids.push(x._id);
+      var k = x.keywords && x.keywords[0] && x.keywords[0].keyword;
+      if (k && !parolaDi[x._id]) parolaDi[x._id] = String(k);
+    });
+    return ids;
+  }).catch(function (e) {
+    liberaControllore(c);
+    if (gen !== generazione) throw e;                                    /* generazione superata: nessun altro tentativo */
+    if (tentativo < TENTATIVI) return new Promise(function (ok) { win.setTimeout(ok, 800 * tentativo); }).then(function () { return chiamata(url, tentativo + 1, gen); });
+    throw e;
+  });
+}
+function cercaIds(chiave, gen) {
+  /* bestSearch, poi search; risultato in cache per la sessione */
+  if (cacheRicerche[chiave]) return Promise.resolve(cacheRicerche[chiave]);
+  var enc = encodeURIComponent(chiave);
+  return chiamata(API + "bestSearch/" + enc, 1, gen).then(function (ids) {
+    if (ids.length) return ids;
+    return chiamata(API + "search/" + enc, 1, gen);
+  }).then(function (ids) { cacheRicerche[chiave] = ids; return ids; });
+}
+function inCoda(fn) {
+  return new Promise(function (ok, no) {
+    coda.push(function () { return fn().then(ok, no); });
+    avanza();
+  });
+}
+function avanza() {
+  while (attive < PARALLELE && coda.length) {
+    attive++;
+    coda.shift()().then(function () { attive--; avanza(); }, function () { attive--; avanza(); });
+  }
+}
+
+function viva(t, gen, rev) { return gen === generazione && t.rev === rev && tutte().indexOf(t) >= 0; }
+
+function cercaTessera(t, gen) {
+  /* parola, poi i candidati lemma (G01): il primo che trova qualcosa fissa il simbolo. Ogni ricerca è legata alla
+     revisione della tessera (R11): un cambio fatto nel frattempo la rende inerte. */
+  t.stato = "attesa"; t.alternative = []; t.rev = (t.rev || 0) + 1;
+  var rev = t.rev;
+  var lista = [t.chiave].concat(candidati(t.chiave));
+  if (CONSEGNE[t.chiave]) lista = [CONSEGNE[t.chiave]].concat(lista.filter(function (c) { return c !== CONSEGNE[t.chiave]; }));
+  var i = 0;
+  function prossimo() {
+    /* si ferma al primo candidato che trova qualcosa; gli altri lemmi restano al docente («Cerca un altro simbolo») */
+    if (!viva(t, gen, rev) || i >= lista.length) return Promise.resolve();
+    var c = lista[i++];
+    return cercaIds(c, gen).then(function (ids) {
+      if (!viva(t, gen, rev)) return;
+      ids.forEach(function (id) { if (t.alternative.indexOf(id) < 0 && t.alternative.length < 8) t.alternative.push(id); });
+      if (!t.alternative.length) return prossimo();
+    });
+  }
+  disegnaTessera(t); aggiornaStampa();
+  return inCoda(function () {
+    return prossimo().then(function () {
+      if (!viva(t, gen, rev)) return;
+      t.cercata = true;
+      if (t.classe === "vuota" && !$("caaPiccole").checked && !(scelteManuali[t.chiave] && scelteManuali[t.chiave].cerca)) { t.stato = "testo"; t.cercata = false; }
+      else if (scelteManuali[t.chiave] && scelteManuali[t.chiave].id !== undefined) {
+        t.scelto = scelteManuali[t.chiave].id;
+        if (t.scelto !== null && t.alternative.indexOf(t.scelto) < 0) t.alternative.unshift(t.scelto);
+        t.stato = t.scelto === null ? "senza" : "ok";
+      } else {
+        t.scelto = t.alternative.length ? t.alternative[0] : null;
+        t.stato = t.alternative.length ? "ok" : "nessuno";
+      }
+      disegnaTessera(t); aggiornaDialogSe(t);
+    }, function () {
+      if (!viva(t, gen, rev)) return;
+      t.stato = "errore"; t.cercata = false;
+      disegnaTessera(t); aggiornaDialogSe(t);
+    }).then(aggiornaBanner);
+  });
+}
+
+/* ---- la scheda ---- */
+function costruisci(tok) {
+  generazione++;
+  fermaRichieste();
+  var gen = generazione;
+  mossaPrecedente = null; $("caaAnnullaMossa").disabled = true;
+  righe = tok.map(function (riga) {
+    return riga.map(function (p) { return { etichetta: p.etichetta, chiave: p.chiave, classe: p.classe, stato: "testo", alternative: [], scelto: null, cercata: false, rev: 0 }; });
+  });
+  var daFare = [];
+  righe.forEach(function (riga) { riga.forEach(function (t) { if (daCercare(t)) { t.stato = "attesa"; daFare.push(t); } }); });
+  disegnaScheda();                                                       /* le tessere in attesa nascono già in attesa: «Stampa» resta spento */
+  daFare.forEach(function (t) { cercaTessera(t, gen); });
+  aggiornaBanner();
+}
+function daCercare(t) {
+  if (t.classe === "parola") return true;
+  if (t.classe === "vuota") return $("caaPiccole").checked;
+  return !!(scelteManuali[t.chiave] && scelteManuali[t.chiave].cerca);   /* numeri e nomi: solo se il docente lo ha chiesto */
+}
+function disegnaScheda() {
+  var cont = $("caaRighe");
+  cont.textContent = "";
+  righe.forEach(function (riga, r) {
+    var div = doc.createElement("div"); div.className = "caa-riga";
+    riga.forEach(function (t, i) {
+      var b = doc.createElement("button"); b.type = "button"; b.className = "caa-tessera"; b.dataset.r = r; b.dataset.i = i;
+      b.addEventListener("click", function () { apriDialog(r, i); });
+      div.appendChild(b);
+      t.nodo = b;
+      disegnaTessera(t);
+    });
+    cont.appendChild(div);
+  });
+  aggiornaStampa();
+}
+function disegnaTessera(t) {
+  var b = t.nodo; if (!b) return;
+  b.textContent = "";
+  var piccola = t.classe === "vuota" && !t.cercata && t.stato !== "ok";
+  b.className = "caa-tessera" + (piccola ? " caa-piccola" : "") + (t.stato === "attesa" ? " caa-attesa" : "") + (t.stato === "errore" ? " caa-errore" : "") + (t.stato === "ok" ? "" : " caa-senza");
+  var descr;
+  if (t.stato === "ok" && t.scelto !== null) {
+    var im = doc.createElement("img"), id = t.scelto; im.alt = ""; im.decoding = "async"; im.loading = "eager";
+    im.src = STATIC + id + "/" + id + "_300.png";
+    im.addEventListener("error", function () {
+      if (im.parentNode !== b || t.nodo !== b || t.scelto !== id) return;   /* immagine già sostituita: non tocca niente (R10) */
+      t.stato = "errore"; disegnaTessera(t); aggiornaBanner();
+    });
+    im.addEventListener("load", aggiornaStampa);
+    b.appendChild(im);
+    var trovata = parolaDi[id] || "";                                   /* R15: la parola trovata, se diversa da quella scritta */
+    descr = t.etichetta + (trovata && trovata.toLowerCase() !== t.etichetta.toLowerCase() ? ", simbolo " + trovata : "") + ", cambia simbolo";
+  } else if (t.stato === "attesa") { descr = t.etichetta + ", cerco il simbolo"; }
+  else if (t.stato === "errore") { descr = t.etichetta + ", simbolo non caricato, riprova"; }
+  else if (t.stato === "nessuno") { descr = t.etichetta + ", nessun simbolo trovato, scegli"; }
+  else { descr = t.etichetta + ", senza simbolo, scegli"; }
+  var sp = doc.createElement("span"); sp.className = "caa-parola"; sp.textContent = t.etichetta; b.appendChild(sp);
+  if (t.stato === "errore" || t.stato === "nessuno" || t.stato === "attesa") {
+    var sg = doc.createElement("span"); sg.className = "caa-segno";
+    sg.textContent = t.stato === "errore" ? "non caricato" : t.stato === "attesa" ? "…" : "nessun simbolo";
+    b.appendChild(sg);
+  }
+  b.setAttribute("aria-label", descr);
+  aggiornaStampa();
+}
+function tutte() { var out = []; righe.forEach(function (r) { r.forEach(function (t) { out.push(t); }); }); return out; }
+function testoDalleTessere() {
+  /* il testo che esce (frammento #testo=, prompt) è quello delle tessere di adesso, non il campo del passo 2 (R14) */
+  return righe.map(function (r) { return r.map(function (t) { return t.etichetta; }).join(" "); }).join("\n");
+}
+function aggiornaBanner() {
+  var err = tutte().filter(function (t) { return t.stato === "errore"; }).length;
+  var att = tutte().filter(function (t) { return t.stato === "attesa"; }).length;
+  var ban = $("caaBanner");
+  if (err) { $("caaBannerTesto").textContent = err + (err === 1 ? " simbolo non è arrivato" : " simboli non sono arrivati") + " (rete lenta o assente)."; ban.classList.add("caa-visibile"); }
+  else ban.classList.remove("caa-visibile");
+  avviso("caaAvviso3", att ? "Cerco i simboli: " + att + " in attesa." : "");
+  aggiornaStampa();
+}
+function aggiornaStampa() {
+  /* «Stampa» solo quando nessuna tessera è in attesa e ogni immagine è decodificata o fallita (C12) */
+  var inAttesa = tutte().some(function (t) { return t.stato === "attesa"; });
+  var img = Array.prototype.slice.call($("caaRighe").querySelectorAll("img"));
+  var pronte = img.every(function (i) { return i.complete; });
+  $("caa-stampa").disabled = inAttesa || !pronte;
+}
+$("caaRiprova").addEventListener("click", function () {
+  var gen = generazione;
+  tutte().forEach(function (t) { if (t.stato === "errore") { delete cacheRicerche[t.chiave]; cercaTessera(t, gen); } });
+  aggiornaBanner();
+});
+$("caaPiccole").addEventListener("change", function () {
+  var gen = generazione;
+  tutte().forEach(function (t) {
+    if (t.classe !== "vuota") return;
+    if ($("caaPiccole").checked) { if (!t.cercata) cercaTessera(t, gen); else { t.stato = t.scelto !== null ? "ok" : "nessuno"; disegnaTessera(t); } }
+    else { t.stato = "testo"; t.cercata = false; t.rev = (t.rev || 0) + 1; disegnaTessera(t); }   /* la revisione nuova rende inerte una ricerca in corso (R11) */
+  });
+  aggiornaBanner();
+});
+Array.prototype.forEach.call(doc.querySelectorAll('input[name="caaMisura"]'), function (r) {
+  r.addEventListener("change", function () { $("caa-scheda").classList.toggle("caa-grande", r.value === "grande" && r.checked); });
+});
+$("caaBn").addEventListener("change", function () { $("caa-scheda").classList.toggle("caa-bn", $("caaBn").checked); });
+function aggiornaTitolo() { $("caaSchedaTitolo").textContent = $("caaTitolo").value.trim(); }
+$("caaTitolo").addEventListener("input", aggiornaTitolo);
+
+/* annulla (G05, R01, R09): uno snapshot di tessere E scelte manuali prima di ogni modifica; al ripristino le ricerche
+   in corso vengono riavviate sulle tessere ripristinate */
+function copiaTessera(t) { var c = {}; for (var k in t) if (k !== "nodo") c[k] = Array.isArray(t[k]) ? t[k].slice() : t[k]; return c; }
+function copiaScelte() { var c = {}; for (var k in scelteManuali) c[k] = { id: scelteManuali[k].id, cerca: scelteManuali[k].cerca }; return c; }
+function salvaMossa() {
+  mossaPrecedente = { righe: righe.map(function (r) { return r.map(copiaTessera); }), scelte: copiaScelte() };
+  $("caaAnnullaMossa").disabled = false;
+}
+$("caaAnnullaMossa").addEventListener("click", function () {
+  if (!mossaPrecedente) return;
+  righe = mossaPrecedente.righe; scelteManuali = mossaPrecedente.scelte; mossaPrecedente = null; $("caaAnnullaMossa").disabled = true;
+  generazione++; fermaRichieste();
+  var gen = generazione;
+  disegnaScheda();
+  tutte().forEach(function (t) { if (t.stato === "attesa") cercaTessera(t, gen); });
+  aggiornaBanner(); avviso("caaAvviso3", "Ultima modifica annullata.");
+});
+
+/* ---- il pannello della tessera (dialog nativo: fuoco dentro, Esc chiude) ---- */
+var dialog = $("caaDialog");
+function statoDialog(t) {
+  return t.stato === "attesa" ? "Sto cercando il simbolo." : t.stato === "nessuno" ? "Nessun simbolo trovato per questa parola: prova a cercarne un altro, per esempio il verbo all'infinito." :
+    t.stato === "errore" ? "Il simbolo non è arrivato: riprova o cerca un'altra parola." : (t.classe === "nome" || t.classe === "numero") && !t.cercata ? "Parola non cercata per riservatezza: cerca tu un simbolo, se serve." : "";
+}
+function aggiornaDialogSe(t) {
+  /* il dialog si aggiorna quando la ricerca della tessera che mostra finisce (R12) */
+  if (!tesseraAperta || tesseraAperta.t !== t || !dialog.open) return;
+  disegnaAlternative(t); $("caaDialogStato").textContent = statoDialog(t);
+}
+function apriDialog(r, i) {
+  var t = righe[r][i]; tesseraAperta = { r: r, i: i, t: t };
+  $("caaDialogTitolo").textContent = "«" + t.etichetta + "»";
+  $("caaParolaCampo").value = t.etichetta;
+  $("caaCercaCampo").value = "";
+  $("caaUnisci").hidden = (i >= righe[r].length - 1);
+  disegnaAlternative(t);
+  $("caaDialogStato").textContent = statoDialog(t);
+  if (typeof dialog.showModal === "function") dialog.showModal(); else dialog.setAttribute("open", "");
+  var primo = dialog.querySelector(".caa-alt[aria-pressed='true']") || $("caaCercaCampo");
+  primo.focus();
+}
+function disegnaAlternative(t, fuocoSuScelta) {
+  var cont = $("caaAlternative"); cont.textContent = "";
+  var daFocalizzare = null;
+  t.alternative.forEach(function (id) {
+    var b = doc.createElement("button"); b.type = "button"; b.className = "caa-alt";
+    b.setAttribute("aria-pressed", id === t.scelto ? "true" : "false");
+    b.setAttribute("aria-label", "Simbolo " + (parolaDi[id] ? "«" + parolaDi[id] + "» " : "") + "n. " + id + (id === t.scelto ? ", scelto" : ""));   /* R15: parola trovata e numero */
+    var im = doc.createElement("img"); im.alt = ""; im.src = STATIC + id + "/" + id + "_300.png"; b.appendChild(im);
+    b.addEventListener("click", function () {
+      if (!tesseraAperta || tesseraAperta.t !== t) return;
+      salvaMossa();
+      t.scelto = id; t.stato = "ok"; t.cercata = true; t.rev = (t.rev || 0) + 1; scelteManuali[t.chiave] = { id: id, cerca: true };
+      disegnaTessera(t); disegnaAlternative(t, true); aggiornaBanner();
+      $("caaDialogStato").textContent = "Simbolo scelto: " + (parolaDi[id] || "") + ".";
+    });
+    if (id === t.scelto) daFocalizzare = b;
+    cont.appendChild(b);
+  });
+  if (!t.alternative.length) { var p = doc.createElement("p"); p.className = "caa-hint"; p.textContent = "Nessun simbolo da mostrare."; cont.appendChild(p); }
+  if (fuocoSuScelta && daFocalizzare) daFocalizzare.focus();            /* il fuoco resta sull'alternativa scelta (R16) */
+}
+$("caaCercaForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+  if (!tesseraAperta) return;
+  var t = tesseraAperta.t, q = $("caaCercaCampo").value.trim().toLowerCase();
+  if (!q) return;
+  $("caaDialogStato").textContent = "Cerco «" + q + "» su arasaac.org.";
+  var gen = generazione, rev = t.rev = (t.rev || 0) + 1;                 /* la ricerca vale per QUESTA tessera e questa revisione (R04) */
+  cercaIds(q, gen).then(function (ids) {
+    if (!viva(t, gen, rev)) return;
+    var mostra = tesseraAperta && tesseraAperta.t === t && dialog.open;
+    if (!ids.length) { if (mostra) $("caaDialogStato").textContent = "Niente per «" + q + "». Prova un'altra parola."; return; }
+    salvaMossa();
+    var nuove = ids.filter(function (id) { return t.alternative.indexOf(id) < 0; });
+    t.alternative = nuove.concat(t.alternative).slice(0, 12);            /* i nuovi davanti, nell'ordine dell'API; il primo resta primo (R18) */
+    t.scelto = ids[0]; t.stato = "ok"; t.cercata = true; scelteManuali[t.chiave] = { id: ids[0], cerca: true };
+    disegnaTessera(t); aggiornaBanner();
+    if (mostra) { disegnaAlternative(t); $("caaDialogStato").textContent = "Trovati " + ids.length + " simboli per «" + q + "»: il primo è scelto."; }
+  }).catch(function () { if (tesseraAperta && tesseraAperta.t === t) $("caaDialogStato").textContent = "La ricerca non è riuscita (rete). Riprova."; });
+});
+$("caaParolaOk").addEventListener("click", function () {
+  if (!tesseraAperta) return;
+  var t = tesseraAperta.t, v = $("caaParolaCampo").value.trim();
+  if (!v) return;
+  salvaMossa(); t.etichetta = v; disegnaTessera(t); $("caaDialogTitolo").textContent = "«" + v + "»"; $("caaDialogStato").textContent = "Parola cambiata.";
+});
+$("caaSenza").addEventListener("click", function () {
+  if (!tesseraAperta) return;
+  var t = tesseraAperta.t;
+  salvaMossa(); t.scelto = null; t.stato = "senza"; t.cercata = true; t.rev = (t.rev || 0) + 1; scelteManuali[t.chiave] = { id: null, cerca: true };
+  disegnaTessera(t); disegnaAlternative(t); aggiornaBanner(); chiudiDialog(t.nodo);
+});
+$("caaTogli").addEventListener("click", function () {
+  if (!tesseraAperta) return;
+  var r = tesseraAperta.r, i = tesseraAperta.i;
+  salvaMossa();
+  righe[r].splice(i, 1);
+  if (!righe[r].length) righe.splice(r, 1);
+  disegnaScheda(); aggiornaBanner();
+  var vicino = (righe[r] && (righe[r][i] || righe[r][i - 1])) ? (righe[r][i] || righe[r][i - 1]).nodo : $("caa-stampa");
+  chiudiDialog(vicino);                                                  /* G09: il fuoco va alla tessera vicina, non a body */
+});
+$("caaUnisci").addEventListener("click", function () {
+  if (!tesseraAperta) return;
+  var r = tesseraAperta.r, i = tesseraAperta.i, riga = righe[r];
+  if (i >= riga.length - 1) return;
+  salvaMossa();
+  var a = riga[i], b = riga[i + 1];
+  var nuova = { etichetta: a.etichetta + " " + b.etichetta, chiave: (a.chiave + " " + b.chiave), classe: "parola", stato: "attesa", alternative: [], scelto: null, cercata: false, rev: 0 };
+  riga.splice(i, 2, nuova);
+  disegnaScheda();                                                       /* nasce in attesa: «Stampa» resta spento finché la ricerca finisce (R13) */
+  tesseraAperta = { r: r, i: i, t: nuova };
+  $("caaDialogTitolo").textContent = "«" + nuova.etichetta + "»"; $("caaParolaCampo").value = nuova.etichetta; $("caaUnisci").hidden = (i >= riga.length - 1);
+  disegnaAlternative(nuova); $("caaDialogStato").textContent = "Parole unite: cerco un simbolo per la locuzione.";
+  cercaTessera(nuova, generazione);                                      /* a fine ricerca il dialog si aggiorna da solo (R12) */
+});
+function chiudiDialog(fuocoSu) {
+  if (dialog.open) dialog.close();
+  tesseraAperta = null;
+  var dest = fuocoSu || $("caa-stampa");
+  if (dest && dest.focus) dest.focus();
+}
+$("caaDialogChiudi").addEventListener("click", function () { var t = tesseraAperta && tesseraAperta.t; chiudiDialog(t && t.nodo); });
+dialog.addEventListener("close", function () { var t = tesseraAperta && tesseraAperta.t; tesseraAperta = null; if (t && t.nodo) t.nodo.focus(); });
+dialog.addEventListener("click", function (e) { if (e.target === dialog) chiudiDialog(); });
+
+/* ---- stampa, navigazione, nuova scheda ---- */
+$("caa-stampa").addEventListener("click", function () { try { win.focus(); } catch (e) { /* niente */ } win.print(); });
+$("caaIndietro3").addEventListener("click", function () { vaiPasso(2); });
+$("caaNuova").addEventListener("click", function () {
+  generazione++; fermaRichieste(); righe = []; mossaPrecedente = null; scelteManuali = {};
+  $("caaRighe").textContent = ""; $("caaTitolo").value = ""; aggiornaTitolo();
+  $("caaTesto").value = ""; $("caaTestoLibero").value = ""; input.value = "";
+  anteprima.classList.add("caa-hidden"); anteprima.removeAttribute("src");
+  if (urlAnteprima) { try { URL.revokeObjectURL(urlAnteprima); } catch (e) { /* niente */ } urlAnteprima = null; }
+  nomeFile.classList.add("caa-hidden"); zona.classList.remove("has-image");
+  avviso("caaAvviso1", ""); avviso("caaAvviso2", ""); avviso("caaAvviso3", ""); $("caaPromptOutput").value = "";
+  $("caaAnnullaMossa").disabled = true;
+  vaiPasso(1);
+});
+$("caaApriScheda").addEventListener("click", function () {
+  /* C06, R14: il testo delle tessere di adesso viaggia nel frammento, dentro il browser */
+  this.href = "./#testo=" + encodeURIComponent(righe.length ? testoDalleTessere() : $("caaTesto").value);
+});
+
+/* ---- la via secondaria: il prompt per l'AI ---- */
+Array.prototype.forEach.call(doc.querySelectorAll(".caa-chip"), function (c) {
+  c.addEventListener("click", function () { var acceso = c.getAttribute("aria-pressed") !== "true"; c.setAttribute("aria-pressed", acceso ? "true" : "false"); c.classList.toggle("selected", acceso); });
+});
+var copiaBtn = $("caaCopia"), TESTO_COPIA = copiaBtn.textContent, attesaCopia = null, out = $("caaPromptOutput");
+function copiata() { win.clearTimeout(attesaCopia); copiaBtn.textContent = "✓ Copiato!"; avviso("caaAvvisoCopia", "Prompt copiato. Ora apri la chat e incollalo."); attesaCopia = win.setTimeout(function () { copiaBtn.textContent = TESTO_COPIA; }, 2500); }
+function ripiego() {
+  try { out.focus(); out.select(); out.setSelectionRange(0, out.value.length); } catch (e) { /* niente */ }
+  var ok = false; try { ok = doc.execCommand("copy"); } catch (e) { ok = false; }
+  if (ok) { copiata(); return; }
+  avviso("caaAvvisoCopia", "Premi Ctrl+C (Cmd+C sul Mac), oppure tieni premuto sul testo e scegli Copia: il prompt è già selezionato.");
+}
+copiaBtn.addEventListener("click", function () {
+  var ids = []; Array.prototype.forEach.call(doc.querySelectorAll(".caa-chip[aria-pressed='true']"), function (c) { ids.push(c.getAttribute("data-id")); });
+  out.value = caaComponi({ testo: righe.length ? testoDalleTessere() : $("caaTesto").value, difficolta: ids });
+  var appunti = win.navigator && win.navigator.clipboard, p = null;
+  if (appunti && typeof appunti.writeText === "function") { try { p = appunti.writeText(out.value); } catch (e) { p = null; } }
+  if (p && typeof p.then === "function") { p.then(copiata, ripiego); return; }
+  ripiego();
+});
+})(typeof window !== "undefined" ? window : this);
+</script>
+
+</div>
+<!-- /wp:html -->
+
+</main>
+
+<script>
+(function(){var b=document.getElementById("apri-menu"),n=document.getElementById("menu");
+if(!b||!n){return;}
+var t=b.querySelector("span");
+function metti(a){b.setAttribute("aria-expanded",a?"true":"false");n.classList.toggle("aperto",a);if(t){t.textContent=a?"Chiudi":"Menu";}}
+b.addEventListener("click",function(){metti(b.getAttribute("aria-expanded")!=="true");});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&n.classList.contains("aperto")){metti(false);b.focus();}});})();
+</script>
+<script>
+(function(){var v=document.querySelectorAll(".video-facciata");
+for(var i=0;i<v.length;i++){(function(box){var b=box.querySelector(".video-avvia"),t=box.querySelector("template");
+if(!b||!t||!t.content){return;}
+b.addEventListener("click",function(){var f=t.content.querySelector("iframe");if(!f){return;}
+f=f.cloneNode(true);var s=f.getAttribute("src")||"";f.setAttribute("src",s+(s.indexOf("?")<0?"?":"&")+"autoplay=1");
+box.classList.remove("video-facciata");box.textContent="";box.appendChild(f);});})(v[i]);}})();
+</script>
+<script>
+(function(){var fs=document.querySelectorAll('form[action*="sibforms.com"]');
+for(var i=0;i<fs.length;i++){(function(f){if(f.id==="cm-email-form-caa"){return;}
+var nome=f.getAttribute("target"),fr=nome?document.querySelector('iframe[name="'+nome+'"]'):null,attesa=false;
+var esito=document.createElement("p");esito.className="form-esito";esito.setAttribute("role","status");esito.setAttribute("aria-live","polite");
+f.parentNode.insertBefore(esito,f.nextSibling);
+function fatto(){if(!attesa){return;}attesa=false;f.style.display="none";esito.textContent="Ricevuto: sei iscritto al corso.";}
+if(fr){fr.addEventListener("load",fatto);}
+f.addEventListener("submit",function(){attesa=true;var b=f.querySelector('button[type="submit"]');if(b){b.disabled=true;b.textContent="Invio in corso";}setTimeout(fatto,6000);});})(fs[i]);}})();
+</script>
+</body>
+</html>

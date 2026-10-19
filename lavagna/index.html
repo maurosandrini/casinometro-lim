@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Casinometro in classe</title>
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/lim.css?v=3f1a6209">
+</head>
+<body>
+<section class="fono lim" id="fonometro" data-fase="pronto" data-vista="a" data-area="vuota" data-timer="pronto" data-grande="no" data-pannello="no" data-aiuto="no" aria-label="Casinometro in classe">
+
+<div class="lim-orologio">
+<p class="fono-ora"><span class="lim-ora" id="fono-ora">--:--</span><span class="lim-piccolo">ora di Roma</span></p>
+</div>
+
+<div class="lim-fono">
+<div class="fono-pronto">
+<p class="lim-nota-micro">Il microfono serve solo al fonometro. L'audio non esce da questo computer.</p>
+<button class="fono-avvia" id="fono-avvia" type="button">Avvia</button>
+</div>
+<div class="fono-pannello">
+<p class="fono-misura">dB (stima)</p>
+<div class="fono-strumento" role="img" aria-label="Livello del rumore della classe e linea">
+<div class="fono-scala" aria-hidden="true"><span class="fono-tacca" style="bottom:6.67%">30</span><span class="fono-tacca" style="bottom:20.00%">40</span><span class="fono-tacca" style="bottom:33.33%">50</span><span class="fono-tacca" style="bottom:46.67%">60</span><span class="fono-tacca" style="bottom:60.00%">70</span><span class="fono-tacca" style="bottom:73.33%">80</span><span class="fono-tacca" style="bottom:86.67%">90</span><span class="fono-tacca" style="bottom:100.00%">100</span></div>
+<div class="fono-colonna">
+<div class="fono-livello" id="fono-livello"></div>
+<div class="fono-livello-sopra" id="fono-livello-sopra"></div>
+<div class="fono-media-tacca" id="fono-media-tacca" hidden></div>
+<div class="fono-linea" id="fono-linea" hidden></div>
+</div>
+<div class="fono-etichette">
+<span class="fono-etichetta fono-etichetta-livello" id="fono-etichetta-livello"><span id="fono-numero">--</span></span>
+<span class="fono-etichetta fono-etichetta-linea" id="fono-etichetta-linea" hidden>linea <span id="fono-linea-valore">--</span></span>
+<span class="fono-etichetta fono-etichetta-media" id="fono-etichetta-media" hidden>media <span id="fono-media-tacca-valore">--</span></span>
+</div>
+</div>
+<div class="lim-orizzontale" aria-hidden="true">
+<div class="lim-o-etichette"><span class="lim-o-et lim-o-et-linea" hidden>linea <span class="lim-o-v-linea">--</span></span></div>
+<div class="lim-binario-o">
+<div class="lim-o-sotto"></div>
+<div class="lim-o-sopra"></div>
+<div class="lim-o-media" hidden></div>
+<div class="lim-o-linea" hidden></div>
+</div>
+<div class="lim-o-etichette"><span class="lim-o-et lim-o-et-media" hidden>media <span class="lim-o-v-media">--</span></span></div>
+</div>
+<p class="lim-numero"><span class="lim-numero-valore">--</span><span class="lim-numero-unita">dB (stima)</span></p>
+<div class="fono-media" id="fono-media-riquadro" data-sopra="no" hidden>
+<p class="fono-media-titolo">Media dell'ultimo minuto</p>
+<p class="fono-media-valore"><span id="fono-media">--</span> <span class="fono-media-unita">dB</span></p>
+</div>
+<div class="fono-parola">
+<p class="fono-stato-classe" id="fono-stato-classe" aria-live="polite"></p>
+<p class="fono-istruzione" id="fono-istruzione" hidden></p>
+<div class="fono-missione" id="fono-missione" hidden>
+<p class="fono-missione-titolo" id="fono-missione-titolo" hidden></p>
+<p class="fono-conto" id="fono-conto"></p>
+<div class="fono-respiro" id="fono-respiro" hidden><span class="fono-cerchio" aria-hidden="true"></span><span class="fono-respiro-testo" id="fono-respiro-testo"></span></div>
+</div>
+<div class="fono-anello" id="fono-anello" hidden>
+<svg viewBox="0 0 40 40" aria-hidden="true"><circle class="fono-anello-traccia" cx="20" cy="20" r="15.9155" pathLength="100"/><circle class="fono-anello-arco" id="fono-anello-arco" cx="20" cy="20" r="15.9155" pathLength="100" transform="rotate(-90 20 20)"/></svg>
+<span class="fono-anello-numero" id="fono-anello-numero"></span>
+</div>
+</div>
+<div class="fono-barra">
+<span class="fono-capo">LAVORO</span>
+<div class="fono-binario"><button class="fono-x" id="fono-x" type="button" data-su="lavoro" aria-label="Sposta la X su RESET" aria-keyshortcuts="R">X</button></div>
+<span class="fono-capo">RESET</span>
+</div>
+<div class="fono-storia">
+<canvas id="fono-storia" role="img" aria-label="Andamento degli ultimi 5 minuti" aria-describedby="fono-riepilogo fono-andamento"></canvas>
+<p class="fono-riepilogo"><span id="fono-riepilogo"></span> <span id="fono-andamento"></span></p>
+</div>
+<p class="fono-spento" id="fono-spento" hidden></p>
+<div class="fono-comandi">
+<button class="fono-tasto lim-ic-fissa" id="fono-fissa" type="button" aria-keyshortcuts="L">Fissa la linea</button>
+<button class="fono-tasto lim-ic-pausa" id="fono-pausa" type="button" aria-keyshortcuts="Space">Pausa</button>
+<button class="fono-tasto fono-tasto-ferma lim-ic-ferma" id="fono-ferma" type="button">Ferma</button>
+</div>
+</div>
+<p class="fono-avviso" id="fono-avviso" role="status"></p>
+</div>
+
+<div class="lim-timer" id="lim-timer">
+<div class="lim-disco" role="img" aria-label="Tempo che resta">
+<svg viewBox="0 0 100 100" aria-hidden="true"><circle class="lim-disco-fondo" cx="50" cy="50" r="48"/><path class="lim-disco-settore" id="lim-settore" d=""/></svg>
+</div>
+<div class="lim-timer-lato">
+<button class="lim-cifre" id="lim-cifre" type="button">05:00</button>
+<p class="lim-scaduto" id="lim-scaduto" role="status"></p>
+<div class="lim-timer-comandi">
+<button class="lim-tasto lim-ic-avvia" id="lim-avvia" type="button" aria-label="Avvia il timer" aria-keyshortcuts="T">Avvia</button>
+<button class="lim-tasto lim-ic-azzera" id="lim-azzera" type="button">Azzera</button>
+<button class="lim-tasto lim-ic-tempo" id="lim-tempo" type="button" aria-expanded="false" aria-controls="lim-pannello">Tempo</button>
+<button class="lim-tasto lim-ic-grande" id="lim-grande" type="button" aria-pressed="false"></button>
+</div>
+</div>
+<div class="lim-timer-barra" aria-hidden="true"><div class="lim-timer-barra-pieno" id="lim-barra-pieno"></div></div>
+</div>
+
+<div class="lim-barra-area">
+<form class="lim-link" id="lim-form" autocomplete="off">
+<input class="lim-campo" id="lim-link" type="text" inputmode="url" spellcheck="false" placeholder="Incolla un link (sito o YouTube)" aria-label="Incolla un link (sito o YouTube)">
+<button class="lim-tasto" id="lim-mostra" type="submit">Mostra</button>
+</form>
+<button class="lim-tasto" id="lim-pdf" type="button">Apri un PDF</button>
+<input class="lim-file" id="lim-file" type="file" accept="application/pdf,.pdf" hidden>
+<button class="lim-tasto" id="lim-caa" type="button">Schede CAA</button>
+<button class="lim-tasto" id="lim-scheda" type="button" disabled>Apri in una scheda</button>
+<button class="lim-tasto" id="lim-chiudi" type="button">Chiudi</button>
+<button class="lim-tasto lim-vista" id="lim-vista-a" type="button" aria-pressed="true">Vista A</button>
+<button class="lim-tasto lim-vista" id="lim-vista-b" type="button" aria-pressed="false">Vista B</button>
+<button class="fono-tasto lim-ic-schermo" id="fono-schermo" type="button">Schermo intero</button>
+<button class="lim-tasto lim-aiuto-tasto" id="lim-aiuto-apri" type="button" aria-label="Aiuto e informativa" aria-expanded="false" aria-controls="lim-aiuto">?</button>
+</div>
+
+<div class="lim-area" id="lim-area">
+<div class="ardesia" id="lim-ardesia">
+<p class="ardesia-data gesso-testo"><time id="lim-data" datetime=""></time></p>
+<p class="ardesia-titolo gesso-testo">Cosa facciamo oggi?</p>
+<p class="lim-vuota gesso-testo" id="lim-vuota">Qui puoi mostrare un sito, un video di YouTube o un PDF. Il PDF resta su questo computer.</p>
+</div>
+<div class="lim-riquadro" id="lim-riquadro"></div>
+<p class="lim-nota-sito" id="lim-nota-sito" hidden></p>
+<p class="lim-messaggio" id="lim-messaggio" role="status"></p>
+<div class="lim-aiuto" id="lim-aiuto" role="dialog" aria-labelledby="lim-aiuto-titolo" hidden>
+<div class="lim-aiuto-scorre" id="lim-aiuto-scorre" tabindex="0">
+<h2 class="lim-aiuto-titolo" id="lim-aiuto-titolo">Come si usa</h2>
+<ol class="lim-aiuto-uso">
+<li>Avvia accende il fonometro: il browser chiede il microfono.</li>
+<li>Quando il rumore di lavoro ti va bene, premi Fissa la linea: il Casinometro ascolta dieci secondi e mette la linea poco sopra.</li>
+<li>Se la classe resta sopra la linea, tocca la X (o premi R): scivola su RESET, senza parlare.</li>
+<li>Tempo sceglie la durata del timer, Avvia lo fa partire (anche col tasto T).</li>
+<li>Incolla un link di YouTube o di un sito e tocca Mostra; Apri un PDF lo mostra da questo computer.</li>
+<li>Schede CAA: fotografi la pagina del libro, correggi il testo, e la scheda con i pittogrammi ARASAAC è pronta da stampare. La foto resta su questo computer. Per stampare usa il tasto Stampa dentro la scheda, non quello del browser.</li>
+</ol>
+<p class="lim-aiuto-frase">Il microfono calcola il volume in questo browser e non lo salva; nessun audio parte verso di me. I video, i siti e l'AI che apri li contatta il tuo browser, col tuo account. Non scrivere nomi né altri dati di alunni.</p>
+<p class="lim-aiuto-frase">Se il browser non chiede il microfono, la scuola lo ha spento sul PC: timer e link funzionano lo stesso. Se il Wi-Fi non apre la pagina, guardate questo schermo.</p>
+<h3 class="lim-aiuto-sotto">Informativa</h3>
+<ul class="lim-aiuto-info">
+<li>Questa pagina è servita da Hostinger, l'hosting del sito, che vede gli indirizzi IP di chi la apre.</li>
+<li>Le risorse esterne arrivano solo quando le apri tu: video, siti, chat.</li>
+<li>Nessuna memoria nel browser: la pagina non salva niente su questo computer.</li>
+</ul>
+<p class="lim-aiuto-piede"><span>Nessuna garanzia e nessuna assistenza.</span> <span>Casinometro: <a class="lim-aiuto-link" id="lim-aiuto-link" href="https://casinometro.it/lavagna/" target="_blank" rel="noopener noreferrer">casinometro.it/lavagna</a></span> <span class="lim-aiuto-versione" id="lim-aiuto-versione">Versione 0.4 (prova) del 19/10/2026</span></p>
+</div>
+<button class="lim-tasto lim-aiuto-chiudi" id="lim-aiuto-chiudi" type="button">Chiudi l'aiuto</button>
+</div>
+<div class="ardesia-mensola" aria-hidden="true"><span class="gessetto"></span><span class="gessetto gessetto-giallo"></span><span class="gessetto gessetto-corto"></span><span class="cancellino"></span></div>
+</div>
+
+<div class="lim-banda"><p>Spazio per il gioco di classe</p></div>
+
+<div class="lim-pannello" id="lim-pannello" hidden>
+<div class="lim-durate">
+<button class="lim-tasto lim-durata" type="button" data-minuti="1">1 <span>min</span></button>
+<button class="lim-tasto lim-durata" type="button" data-minuti="2">2 <span>min</span></button>
+<button class="lim-tasto lim-durata" type="button" data-minuti="3">3 <span>min</span></button>
+<button class="lim-tasto lim-durata" type="button" data-minuti="5">5 <span>min</span></button>
+<button class="lim-tasto lim-durata" type="button" data-minuti="10">10 <span>min</span></button>
+<button class="lim-tasto lim-durata" type="button" data-minuti="15">15 <span>min</span></button>
+<button class="lim-tasto" id="lim-altro" type="button" aria-expanded="false" aria-controls="lim-altro-campi">Altro</button>
+</div>
+<div class="lim-altro-campi" id="lim-altro-campi" hidden>
+<label class="lim-etichetta">Minuti <input class="lim-campo lim-numerico" id="lim-minuti" type="number" min="0" max="99" step="1" value="5" inputmode="numeric"></label>
+<label class="lim-etichetta">Secondi <input class="lim-campo lim-numerico" id="lim-secondi" type="number" min="0" max="59" step="1" value="0" inputmode="numeric"></label>
+<button class="lim-tasto" id="lim-usa" type="button">Usa questo tempo</button>
+</div>
+<button class="lim-tasto lim-pannello-chiudi" id="lim-pannello-chiudi" type="button">Chiudi</button>
+</div>
+
+</section>
+<script src="assets/lim-livello.js?v=14f29d07"></script>
+<script src="assets/fonometro.js?v=9a82327b"></script>
+<script src="assets/lim.js?v=80cc22e3"></script>
+</body>
+</html>
