@@ -23,6 +23,11 @@ italiani; rilasciate perché ogni scuola possa copiarle sul proprio hosting.
    impronte SHA-256 fissate in `strumenti/vendor_caa.json`.
 3. Apri `lavagna/` sul computer di classe. Fine.
 
+## Dove si vede
+
+- https://casinometro.it/lavagna/ (la lavagna) e https://casinometro.it/caa/ (CAA Facile): le stesse pagine, online.
+- Problemi e proposte: le «Issues» di questo repository. Nessuna garanzia e nessuna assistenza.
+
 ## Che cosa NON c'è
 
 - I pittogrammi ARASAAC non sono inclusi: la pagina li chiama a runtime da `api.arasaac.org` e `static.arasaac.org`,
